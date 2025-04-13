@@ -1,0 +1,46 @@
+name: Notify Discord
+
+on:
+  push:
+    branches:
+      - '**'
+  create:
+    branches:
+      - '**'
+  pull_request:
+    types: [opened, closed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send message to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          EVENT_NAME="${{ github.event_name }}"
+          MESSAGE=""
+
+          if [ "$EVENT_NAME" == "push" ]; then
+            COMMITS=$(echo "${{ github.event.commits }}" | jq -r '.[] | "- \(.message) (`\(.author.name)`) [🔗](\(.url))"' | head -n 10)
+            MESSAGE="📦 Novo push em \`${{ github.repository }}\` na branch \`${{ github.ref_name }}\`\nAutor: \`${{ github.actor }}\`\nCommits:\n$COMMITS"
+          
+          elif [ "$EVENT_NAME" == "create" ]; then
+            if [ "${{ github.ref_type }}" == "branch" ]; then
+              MESSAGE="🌱 Nova branch criada: \`${{ github.ref }}\` no repositório \`${{ github.repository }}\` por \`${{ github.actor }}\`"
+            fi
+
+          elif [ "$EVENT_NAME" == "pull_request" ]; then
+            if [ "${{ github.event.action }}" == "opened" ]; then
+              MESSAGE="📌 Novo Pull Request criado por \`${{ github.actor }}\`\nTítulo: \`${{ github.event.pull_request.title }}\`\n[🔗 Ver PR](${{ github.event.pull_request.html_url }})"
+            elif [ "${{ github.event.action }}" == "closed" ] && [ "${{ github.event.pull_request.merged }}" == "true" ]; then
+              MESSAGE="✅ Pull Request mesclado por \`${{ github.actor }}\`\nTítulo: \`${{ github.event.pull_request.title }}\`\n[🔗 Ver PR](${{ github.event.pull_request.html_url }})"
+            fi
+          fi
+
+          if [ ! -z "$MESSAGE" ]; then
+            curl -H "Content-Type: application/json" \
+                 -X POST \
+                 -d "{\"content\": \"$MESSAGE\"}" \
+                 $DISCORD_WEBHOOK
+          fi
