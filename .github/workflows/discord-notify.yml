@@ -3,10 +3,8 @@ name: Notify Discord
 on:
   push:
     branches:
-      - '**'
+      - "**"
   create:
-    branches:
-      - '**'
   pull_request:
     types: [opened, closed]
 
@@ -41,7 +39,7 @@ jobs:
 
           if [ "$EVENT_NAME" == "push" ]; then
             MESSAGE="📦 Novo push em \`${{ github.repository }}\` na branch \`${{ github.ref_name }}\`\nAutor: \`${{ github.actor }}\`\nCommits:\n${{ steps.format.outputs.commits }}"
-          
+
           elif [ "$EVENT_NAME" == "create" ] && [ "${{ github.ref_type }}" == "branch" ]; then
             MESSAGE="🌱 Nova branch criada: \`${{ github.ref }}\` no repositório \`${{ github.repository }}\` por \`${{ github.actor }}\`"
 
