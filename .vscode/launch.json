@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ChatApplication<chat>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.a3bradesco.chat.ChatApplication",
+            "projectName": "chat",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ApiApplication<api>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.a3bradesco.api.ApiApplication",
+            "projectName": "api",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
