@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 public class ChatController {
 
     @MessageMapping("/chat.sendMessage") // Mapeia mensagens enviadas para /app/chat.sendMessage
-    @SendTo("topic/public") // Define que a resposta será enviada para todos usuários no /topic/public
+    @SendTo("/topic/public") // Define que a resposta será enviada para todos usuários no /topic/public
 
     // Metodo para o envio de mensagens
     public ChatMessage sendMessage(
@@ -19,7 +19,7 @@ public class ChatController {
     }
 
     @MessageMapping("/chat.addUser")
-    @SendTo("topic/public")
+    @SendTo("/topic/public")
 
     // Método para adicionar usuário à sessão WebSocket e notificar o canal
     public ChatMessage addUser(

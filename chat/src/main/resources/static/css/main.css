@@ -1,0 +1,496 @@
+/* Reset básico e box-sizing */
+* {
+  box-sizing: border-box;
+  margin: 0; /* Adicionado um reset de margin para consistência */
+  padding: 0; /* Adicionado um reset de padding para consistência */
+}
+
+/* Estilos para html e body */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1rem;
+  line-height: 1.58;
+  color: #333;
+  background-color: #f4f4f4;
+  font-weight: 400;
+}
+
+/* Clearfix */
+.clearfix:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+/* Esconder elementos */
+.hidden {
+  display: none;
+}
+
+/* Estilos de formulário */
+.form-control {
+  width: 100%;
+  min-height: 38px;
+  font-size: 15px;
+  border: 1px solid #c8c8c8;
+  padding-left: 10px;
+  outline: none;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Estilos de cabeçalhos */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 1.7em;
+}
+
+/* Estilo de link */
+a {
+  color: #6db33f;
+}
+
+/* Estilos de botões */
+button {
+  box-shadow: none;
+  border: 1px solid transparent;
+  font-size: 14px;
+  outline: none;
+  line-height: 100%;
+  white-space: nowrap;
+  vertical-align: middle;
+  padding: 0.6rem 1rem;
+  border-radius: 2px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  min-height: 38px;
+}
+
+button.default {
+  background-color: #e8e8e8;
+  color: #333;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+/* Estilos base para os botões primários e de destaque */
+button.primary,
+button.accent {
+  z-index: 1;
+  position: relative;
+  padding: 20px 46px;
+  text-align: center;
+  text-transform: uppercase;
+  color: black; /* Cor do texto inicial (ciano) */
+  font-size: 16px;
+  font-weight: bold;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  transition: color 0.5s;
+  cursor: pointer;
+  border-radius: 30px;
+  overflow: hidden; /* Importante para o efeito blob */
+
+}
+
+/* Borda ao redor do botão */
+button.primary:before,
+button.accent:before {
+  content: "";
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid black; /* Largura e cor da borda */
+  border-radius: 30px;
+}
+
+/* Fundo que aparece no hover */
+button.primary:after,
+button.accent:after {
+  content: "";
+  z-index: -2;
+  position: absolute;
+  left: 3px; /* Ajuste para compensar a borda */
+  top: 3px; /* Ajuste para compensar a borda */
+  width: calc(100% - 6px); /* Ajuste para compensar a borda */
+  height: calc(100% - 6px); /* Ajuste para compensar a borda */
+  background: #ffffff; /* Cor do fundo no hover */
+  transition: all 0.3s 0.2s;
+  border-radius: 30px;
+}
+
+/* Estilo no hover */
+button.primary:hover,
+button.accent:hover {
+  color: #FFFFFF; /* Cor do texto no hover (branco) */
+}
+
+button.primary:hover:after,
+button.accent:hover:after {
+  left: 0;
+  top: 0;
+}
+
+/* Contêiner interno para os blobs (necessário para overflow: hidden) */
+button.primary .blob-btn__inner,
+button.accent .blob-btn__inner {
+  z-index: -1;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 30px;
+  background: transparent; /* O fundo branco está no :after */
+}
+
+/* Contêiner para os blobs (para aplicar o filtro goo, se você tiver um SVG com esse ID) */
+button.primary .blob-btn__blobs,
+button.accent .blob-btn__blobs {
+  position: relative;
+  display: block;
+  height: 100%;
+  /* filter: url('#goo');  Descomente se você tiver um filtro SVG com ID "goo" */
+}
+
+/* Estilos para cada blob */
+button.primary .blob-btn__blob,
+button.accent .blob-btn__blob {
+  position: absolute;
+  top: 2px; /* Ajuste para a borda */
+  width: 25%; /* 100% / 4 blobs */
+  height: 100%;
+  background: black; /* Cor dos blobs (ciano) */
+  border-radius: 100%;
+  transform: translate3d(0, 150%, 0) scale(1.7);
+  transition: transform 0.45s;
+}
+
+/* Posicionamento individual dos blobs */
+button.primary .blob-btn__blob:nth-child(1),
+button.accent .blob-btn__blob:nth-child(1) {
+  left: 0%;
+  transition-delay: 0s;
+}
+
+button.primary .blob-btn__blob:nth-child(2),
+button.accent .blob-btn__blob:nth-child(2) {
+  left: 30%; /* Ajuste aproximado para espaçamento */
+  transition-delay: 0.08s;
+}
+
+button.primary .blob-btn__blob:nth-child(3),
+button.accent .blob-btn__blob:nth-child(3) {
+  left: 60%; /* Ajuste aproximado para espaçamento */
+  transition-delay: 0.16s;
+}
+
+button.primary .blob-btn__blob:nth-child(4),
+button.accent .blob-btn__blob:nth-child(4) {
+  left: 90%; /* Ajuste aproximado para espaçamento */
+  transition-delay: 0.24s;
+}
+
+/* Animação dos blobs no hover */
+button.primary:hover .blob-btn__blob,
+button.accent:hover .blob-btn__blob {
+  transform: translateZ(0) scale(1.7);
+}
+
+/* Página de nome de usuário */
+#username-page {
+  text-align: center;
+}
+
+.username-page-container {
+  background: #f9f0e3;
+  box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  display: inline-block;
+  margin: -160px auto 0;
+  vertical-align: middle;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  padding: 35px 55px;
+  min-height: 250px;
+}
+
+.username-page-container .username-submit {
+  margin-top: 10px;
+}
+
+/* Página de chat */
+#chat-page {
+  position: relative;
+  height: 100%;
+}
+
+.chat-container {
+  max-width: 1000px;
+  margin: 30px auto 0; /* Simplificando as margens */
+  background-color: #f9f0e3;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  height: calc(100% - 60px);
+  max-height: 600px;
+  position: relative;
+  border-radius: 9px;
+}
+
+#chat-page ul {
+  list-style-type: none;
+  background-color: #f9f0e3;
+  margin: 0 0 0 5px; 
+  overflow: auto;
+  overflow-y: scroll;
+  padding: 0 20px;
+  height: calc(100% - 150px);
+}
+
+#chat-page #messageForm {
+  padding: 20px;
+}
+
+#chat-page ul li {
+  line-height: 1.5rem;
+  padding: 10px 20px;
+  margin: 0;
+}
+
+#chat-page ul li p {
+  margin: 0;
+}
+
+#chat-page .event-message {
+  width: 100%;
+  text-align: center;
+  clear: both;
+}
+
+#chat-page .event-message p {
+  color: #777;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+#chat-page .chat-message {
+  padding-left: 0;
+  position: relative;
+  width: 100%;
+  clear: both;
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+  max-width: 100%;
+}
+
+#chat-page .chat-message i {
+  display: none; /* Oculta o avatar */
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  left: 10px;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 18px;
+  line-height: 42px;
+  color: #fff;
+  text-align: center;
+  border-radius: 50%;
+  font-style: normal;
+  text-transform: uppercase;
+}
+
+#chat-page .chat-message span {
+  color: #333;
+  font-weight: 600;
+}
+
+#chat-page .chat-message p {
+  color: #43464b;
+}
+
+#messageForm .input-group input {
+  float: left;
+  width: calc(100% - 85px);
+}
+
+#messageForm .input-group button {
+  float: left;
+  width: 80px;
+  height: 38px;
+  margin-left: 5px;
+}
+
+#messageArea {
+  width: 98.5%;
+  margin-right: -5px;
+  background-color: #f9f0e3;
+}
+
+.chat-header {
+  text-align: center;
+  padding: 15px;
+  border-bottom: 2px solid black;
+  margin: 0 15px;
+}
+
+.chat-header h2 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.connecting {
+  padding-top: 5px;
+  text-align: center;
+  color: #777;
+  position: absolute;
+  top: 65px;
+  width: 100%;
+}
+
+/* Media queries */
+@media screen and (max-width: 730px) {
+  .chat-container {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .chat-container {
+    height: calc(100% - 30px);
+  }
+
+  .username-page-container {
+    width: auto;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 25px;
+  }
+
+  #chat-page ul {
+    height: calc(100% - 120px);
+  }
+
+  #messageForm .input-group button {
+    width: 65px;
+  }
+
+  #messageForm .input-group input {
+    width: calc(100% - 70px);
+  }
+
+  .chat-header {
+    padding: 10px;
+  }
+
+  .connecting {
+    top: 60px;
+  }
+
+  .chat-header h2 {
+    font-size: 1.1em;
+  }
+}
+
+/* Estilos de mensagens com Flexbox */
+.chat-message.sent {
+  align-items: flex-end;
+}
+
+.chat-message.received {
+  align-items: flex-start;
+}
+
+/* Nome do remetente */
+.sender-name {
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #555;
+  padding: 0 5px;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+/* Bolha da mensagem */
+.message-content {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #f1f0f0;
+  border-radius: 15px;
+  color: #000;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  word-wrap: break-word;
+  text-align: left;
+}
+
+.chat-message.received .message-content {
+  background-color: #f1f0f0;
+  border-radius: 15px 15px 15px 0px;
+}
+
+.chat-message.sent .message-content {
+  background-color: #dcf8c6;
+  border-radius: 15px 15px 0px 15px;
+}
+
+#message{
+  border-radius: 8px;
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
+#messageForm .input-group {
+  display: flex; /* Ativa o Flexbox para os filhos */
+  align-items: center; /* Alinha verticalmente os itens ao centro */
+}
+
+#messageForm .input-group input {
+  flex-grow: 1; /* Faz o input ocupar o máximo de espaço disponível */
+  margin-right: 5px; /* Adiciona um pequeno espaço entre o input e o botão */
+  border-radius: 8px; /* Mantém o border-radius */
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px; /* Mantém o box-shadow */
+}
+
+#messageForm .input-group button {
+  flex-shrink: 0; /* Impede que o botão encolha */
+  width: auto; /* Permite que o botão ajuste sua largura ao conteúdo */
+  height: 38px; /* Mantém a altura do botão */
+  margin-left: 0; /* Remove a margem esquerda, já temos a margem direita no input */
+}
+
+
+#enviar{
+
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+}
