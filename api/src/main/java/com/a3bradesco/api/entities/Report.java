@@ -28,6 +28,16 @@ public class Report implements Serializable {
     String phoneNumber;
     String site;
 
+    public Report(){}
+    
+    public Report(Long id, User reporter, String cnpj, String cpf, String phoneNumber, String site) {
+        this.id = id;
+        this.reporter = reporter;
+        this.cnpj = cnpj;
+        this.cpf = cpf;
+        this.phoneNumber = phoneNumber;
+        this.site = site;
+    }
     
     public Long getId() {
         return id;
