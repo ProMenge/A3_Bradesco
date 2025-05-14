@@ -23,4 +23,8 @@ public class UserService {
         Optional<User> userObject = userRepository.findById(id);
         return userObject.get();
     }
+
+    public User insert(User user){
+        return userRepository.save(user);
+    }
 }
