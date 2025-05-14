@@ -1,55 +1,61 @@
 package com.a3bradesco.api.entities;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_user")
-public class User implements Serializable {
+@Table(name = "tb_report")
+public class Report implements Serializable {
 	private static final long serialVersionUID = 1L;
-    
+
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String cpf;
-    private String phone;
-    private String email;
-    private String password;
 
-    @OneToMany(mappedBy = "reporter")
-    private Set<Report> reports = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User reporter;
 
-    public User(){
-    }
+    String cnpj;
+    String cpf;
+    String phoneNumber;
+    String site;
 
-    public User(Long id, String name, String cpf, String phone, String email, String password) {
-        this.name = name;
+    public Report(){}
+    
+    public Report(Long id, User reporter, String cnpj, String cpf, String phoneNumber, String site) {
+        this.id = id;
+        this.reporter = reporter;
+        this.cnpj = cnpj;
         this.cpf = cpf;
-        this.phone = phone;
-        this.email = email;
-        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.site = site;
     }
-
+    
     public Long getId() {
         return id;
     }
     public void setId(Long id) {
         this.id = id;
     }
-    public String getName() {
-        return name;
+    public User getReporter() {
+        return reporter;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setReporter(User reporter) {
+        this.reporter = reporter;
+    }
+    public String getCnpj() {
+        return cnpj;
+    }
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
     public String getCpf() {
         return cpf;
@@ -57,23 +63,17 @@ public class User implements Serializable {
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
-    public String getPhone() {
-        return phone;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
-    public String getEmail() {
-        return email;
+    public String getSite() {
+        return site;
     }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
+    public void setSite(String site) {
+        this.site = site;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class User implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        User other = (User) obj;
+        Report other = (Report) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
