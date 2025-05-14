@@ -23,4 +23,8 @@ public class ReportService {
         Optional<Report> reportObject = reportRepository.findById(id);
         return reportObject.get();
     }
+
+    public Report insert(Report report){
+        return reportRepository.save(report);
+    }
 }
