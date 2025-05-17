@@ -1,32 +1,29 @@
 package com.a3bradesco.chat.chat;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
-@Controller // Define que essa classe é um controlador Spring (componente do MVC)
+@Controller
 public class ChatController {
 
-    @MessageMapping("/chat.sendMessage") // Mapeia mensagens enviadas para /app/chat.sendMessage
-    @SendTo("/topic/public") // Define que a resposta será enviada para todos usuários no /topic/public
+    @Autowired
+    private ChatService chatService;
 
-    // Metodo para o envio de mensagens
-    public ChatMessage sendMessage(
-            @Payload ChatMessage chatMessage) {
-        return chatMessage;
+    @MessageMapping("/chat.sendMessage")
+    @SendTo("/topic/public")
+    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+        return chatService.processMessage(chatMessage);
     }
 
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
-
-    // Método para adicionar usuário à sessão WebSocket e notificar o canal
     public ChatMessage addUser(
             @Payload ChatMessage chatMessage,
             SimpMessageHeaderAccessor headerAccessor) {
-        // Adiciona o nome do usuário durante a conexão
-        headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
-        return chatMessage;
+        return chatService.registerUser(chatMessage, headerAccessor);
     }
 }
