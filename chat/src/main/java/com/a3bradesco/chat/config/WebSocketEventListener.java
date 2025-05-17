@@ -21,7 +21,7 @@ public class WebSocketEventListener {
     private final SimpMessageSendingOperations messageTemplate;
 
     @EventListener // Marca o método como ouvinte de eventos — nesse caso, escuta desconexões
-    public void handlWebSocketDisconnectListener(SessionDisconnectEvent event) {
+    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         // Extrai os cabeçalhos STOMP da mensagem de desconexão
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
