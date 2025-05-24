@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.a3bradesco.api.dto.ReportDTO;
 import com.a3bradesco.api.entities.Report;
 import com.a3bradesco.api.entities.User;
+import com.a3bradesco.api.entities.enums.ReportType;
 import com.a3bradesco.api.services.ReportService;
 import com.a3bradesco.api.services.UserService;
 
@@ -52,10 +53,8 @@ public class ReportController {
         Report report = new Report(
             null,
             user,
-            reportDTO.getCnpj(),
-            reportDTO.getCpf(),
-            reportDTO.getPhoneNumber(),
-            reportDTO.getSite()
+            ReportType.valueOf(reportDTO.getReportType()),
+            reportDTO.getReportValue()
         );
 
         Report saved = reportService.insert(report);

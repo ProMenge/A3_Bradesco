@@ -3,10 +3,8 @@ package com.a3bradesco.api.dto;
 public class ReportDTO {
 
     private Long reporterId;
-    private String cnpj;
-    private String cpf;
-    private String phoneNumber;
-    private String site;
+    private int reportTypeCode;
+    String reportValue;
 
     // Getters e Setters
     public Long getReporterId() {
@@ -17,36 +15,21 @@ public class ReportDTO {
         this.reporterId = reporterId;
     }
 
-    public String getCnpj() {
-        return cnpj;
+    public int getReportType() {
+        return reportTypeCode;
     }
 
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+    public void setReportType(int reportTypeCode) {
+        this.reportTypeCode = reportTypeCode;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getReportValue() {
+        return reportValue;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setReportValue(String reportValue) {
+        this.reportValue = reportValue;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getSite() {
-        return site;
-    }
-
-    public void setSite(String site) {
-        this.site = site;
-    }
 }
 
