@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/reports")
+@RequestMapping("/userreports")
 public class UserReportController {
     
     @Autowired
