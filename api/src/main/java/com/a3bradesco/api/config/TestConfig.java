@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile;
 
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.enums.ReportType;
-import com.a3bradesco.api.repositories.ReportRepository;
+import com.a3bradesco.api.repositories.UserReportRepository;
 import com.a3bradesco.api.repositories.UserRepository;
 
 import com.a3bradesco.api.entities.UserReport;
@@ -22,7 +22,7 @@ public class TestConfig implements CommandLineRunner {
 	private UserRepository userRepository;
 
     @Autowired
-    private ReportRepository reportRepository;
+    private UserReportRepository reportRepository;
 
 	@Override
 	public void run(String... args) throws Exception {

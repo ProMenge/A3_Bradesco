@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.a3bradesco.api.entities.UserReport;
 
 @Repository
-public interface ReportRepository extends JpaRepository<UserReport, Long>{
+public interface UserReportRepository extends JpaRepository<UserReport, Long>{
     
 }

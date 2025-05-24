@@ -15,7 +15,7 @@ import com.a3bradesco.api.dto.ReportDTO;
 import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.enums.ReportType;
-import com.a3bradesco.api.services.ReportService;
+import com.a3bradesco.api.services.UserReportService;
 import com.a3bradesco.api.services.UserService;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/reports")
-public class ReportController {
+public class UserReportController {
     
     @Autowired
-    ReportService reportService;
+    UserReportService reportService;
 
     @Autowired
     UserService userService;

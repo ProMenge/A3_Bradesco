@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.a3bradesco.api.entities.UserReport;
-import com.a3bradesco.api.repositories.ReportRepository;
+import com.a3bradesco.api.repositories.UserReportRepository;
 
 @Service
-public class ReportService {
+public class UserReportService {
     
     @Autowired
-    ReportRepository reportRepository;
+    UserReportRepository reportRepository;
 
     public List<UserReport> findAll() {
         return reportRepository.findAll();
