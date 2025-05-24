@@ -1,6 +1,6 @@
 package com.a3bradesco.api.dto;
 
-public class ReportDTO {
+public class UserReportDTO {
 
     private Long reporterId;
     private int reportTypeCode;

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.a3bradesco.api.dto.ReportDTO;
+import com.a3bradesco.api.dto.UserReportDTO;
 import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.enums.ReportType;
@@ -45,7 +45,7 @@ public class UserReportController {
     }
 
     @PostMapping()
-    public ResponseEntity<UserReport> saveNewReport(@RequestBody ReportDTO reportDTO) {
+    public ResponseEntity<UserReport> saveNewReport(@RequestBody UserReportDTO reportDTO) {
         //TODO: Atribuir report ao usuário logado
         //pega o usuário passado no dto (pelo id) no banco e atribui o report a ele
         User user = userService.findById(reportDTO.getReporterId());
