@@ -27,4 +27,8 @@ public class UserReportService {
     public UserReport insert(UserReport report){
         return reportRepository.save(report);
     }
+
+    public void deleteById(Long id){
+        reportRepository.deleteById(id);
+    } 
 }
