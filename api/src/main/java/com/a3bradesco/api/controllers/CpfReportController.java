@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.a3bradesco.api.dto.CpfDTO;
 import com.a3bradesco.api.entities.CpfReport;
-import com.a3bradesco.api.repositories.CpfReportRepository;
 import com.a3bradesco.api.services.CpfReportService;
 
 
@@ -26,9 +26,6 @@ public class CpfReportController {
     
     @Autowired
     CpfReportService cpfReportService;
-
-    @Autowired
-    CpfReportRepository cpfReportRepository;
 
     @GetMapping
     public ResponseEntity<List<CpfReport>> findAll() {
@@ -54,12 +51,24 @@ public class CpfReportController {
             report = new CpfReport(cpfInDatabase.getCpf(), cpfInDatabase.getReportQuantity() + 1, LocalDate.now());
         }
 
-        CpfReport saved = cpfReportRepository.save(report);
+        CpfReport saved = cpfReportService.insert(report);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getCpf()).toUri();
 
         return ResponseEntity.created(uri).body(saved);
+    }
+
+    @DeleteMapping("/{cpf}")
+    public ResponseEntity<String> deleteReport(@PathVariable String cpf){
+        cpfReportService.deleteById(cpf);
+        CpfReport isDeleted = cpfReportService.findById(cpf);
+        if(isDeleted == null){
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+        
     }
     
 }

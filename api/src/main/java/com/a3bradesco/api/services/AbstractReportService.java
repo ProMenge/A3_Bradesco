@@ -23,6 +23,10 @@ public abstract class AbstractReportService<T extends AbstractReport> {
         return getRepository().save(report);
     }
 
+    public void deleteById(String id){
+        getRepository().deleteById(id);
+    }
+
     protected abstract T createNewReport(String id);
 
 }
