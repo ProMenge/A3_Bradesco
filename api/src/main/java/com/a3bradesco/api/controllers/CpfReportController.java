@@ -21,7 +21,7 @@ import com.a3bradesco.api.services.CpfReportService;
 
 
 @RestController
-@RequestMapping("/cpf")
+@RequestMapping("/cpf-reports")
 public class CpfReportController {
     
     @Autowired

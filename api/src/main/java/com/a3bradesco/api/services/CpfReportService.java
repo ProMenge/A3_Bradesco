@@ -1,30 +1,28 @@
 package com.a3bradesco.api.services;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import com.a3bradesco.api.entities.CpfReport;
 import com.a3bradesco.api.repositories.CpfReportRepository;
 
 @Service
-public class CpfReportService {
+public class CpfReportService extends AbstractReportService<CpfReport>{
     
     @Autowired
     CpfReportRepository cpfReportReporitory;
 
-    public List<CpfReport> findAll() {
-        return cpfReportReporitory.findAll();
+    @Override
+    protected JpaRepository<CpfReport, String> getRepository() {
+        return cpfReportReporitory;
     }
 
-    public CpfReport findById(String cpf) {
-        Optional<CpfReport> reportObject = cpfReportReporitory.findById(cpf);
-        return reportObject.orElse(null);
+    @Override
+    protected CpfReport createNewReport(String id){
+        return new CpfReport(id, 1, LocalDate.now());
     }
 
-    public CpfReport insert(CpfReport report){
-        return cpfReportReporitory.save(report);
-    }
 }

@@ -9,41 +9,28 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_cpf_reports")
-public class CpfReport implements Serializable {
+public class CpfReport extends AbstractReport implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     private String cpf;
-    private int reportQuantity;
-    private LocalDate lastTimeReported;
 
     public CpfReport(){
     }
 
     public CpfReport(String cpf, int reportQuantity, LocalDate lastTimeReported){
         this.cpf = cpf;
-        this.reportQuantity = reportQuantity;
-        this.lastTimeReported = lastTimeReported;
+        setReportQuantity(reportQuantity);
+        setLastTimeReported(lastTimeReported);
     }
 
     public String getCpf() {
         return cpf;
     }
+
     public void setCpf(String cpf) {
         this.cpf = cpf;
-    }
-    public int getReportQuantity() {
-        return reportQuantity;
-    }
-    public void setReportQuantity(int reportQuantity) {
-        this.reportQuantity = reportQuantity;
-    }
-    public LocalDate getLastTimeReported() {
-        return lastTimeReported;
-    }
-    public void setLastTimeReported(LocalDate lastTimeReported) {
-        this.lastTimeReported = lastTimeReported;
     }
 
     @Override
@@ -51,7 +38,6 @@ public class CpfReport implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((cpf == null) ? 0 : cpf.hashCode());
-        result = prime * result + reportQuantity;
         return result;
     }
 
@@ -69,10 +55,8 @@ public class CpfReport implements Serializable {
                 return false;
         } else if (!cpf.equals(other.cpf))
             return false;
-        if (reportQuantity != other.reportQuantity)
-            return false;
         return true;
     }
-
+    
     
 }
