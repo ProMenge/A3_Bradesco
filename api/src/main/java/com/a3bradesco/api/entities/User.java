@@ -21,7 +21,6 @@ public class User implements Serializable {
     private Long id;
     private String name;
     private String cpf;
-    private String phone;
     private String email;
     private String password;
 
@@ -31,10 +30,9 @@ public class User implements Serializable {
     public User(){
     }
 
-    public User(Long id, String name, String cpf, String phone, String email, String password) {
+    public User(Long id, String name, String cpf, String email, String password) {
         this.name = name;
         this.cpf = cpf;
-        this.phone = phone;
         this.email = email;
         this.password = password;
     }
@@ -56,12 +54,6 @@ public class User implements Serializable {
     }
     public void setCpf(String cpf) {
         this.cpf = cpf;
-    }
-    public String getPhone() {
-        return phone;
-    }
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
     public String getEmail() {
         return email;
