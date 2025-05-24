@@ -8,11 +8,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.entities.CpfReport;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.entities.enums.ReportType;
+import com.a3bradesco.api.repositories.CellphoneReportRepository;
 import com.a3bradesco.api.repositories.CnpjReportRepository;
 import com.a3bradesco.api.repositories.CpfReportRepository;
 import com.a3bradesco.api.repositories.UserReportRepository;
@@ -24,15 +26,14 @@ public class TestConfig implements CommandLineRunner {
 
     @Autowired
 	private UserRepository userRepository;
-
     @Autowired
     private UserReportRepository reportRepository;
-
     @Autowired
     private CpfReportRepository cpfReportRepository;
-
     @Autowired
     private CnpjReportRepository cnpjReportRepository;
+    @Autowired
+    private CellphoneReportRepository cellphoneReportRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -52,6 +53,10 @@ public class TestConfig implements CommandLineRunner {
         CnpjReport cnpjReport1 = new CnpjReport("77311267000124", 1, LocalDate.now());
         CnpjReport cnpjReport2 = new CnpjReport("64788633000199", 2, LocalDate.now());
 
+        CellphoneReport cellphoneReport1 = new CellphoneReport("11911223344", 3, LocalDate.now());
+        CellphoneReport cellphoneReport2 = new CellphoneReport("11955667788", 4, LocalDate.now());
+
+        cellphoneReportRepository.saveAll(Arrays.asList(cellphoneReport1, cellphoneReport2));
         cnpjReportRepository.saveAll(Arrays.asList(cnpjReport1, cnpjReport2));
 		userRepository.saveAll(Arrays.asList(user1, user2, user3));
         reportRepository.saveAll(Arrays.asList(report1, report2, report3, report4, report5));
