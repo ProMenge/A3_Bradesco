@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.a3bradesco.api.dto.ReportDTO;
-import com.a3bradesco.api.entities.Report;
+import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.enums.ReportType;
 import com.a3bradesco.api.services.ReportService;
@@ -33,31 +33,31 @@ public class ReportController {
     UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<Report>> findAll() {
-        List<Report> reportList = reportService.findAll();
+    public ResponseEntity<List<UserReport>> findAll() {
+        List<UserReport> reportList = reportService.findAll();
         return ResponseEntity.ok().body(reportList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Report> findById(@PathVariable Long id){
-        Report report = reportService.findById(id);
+    public ResponseEntity<UserReport> findById(@PathVariable Long id){
+        UserReport report = reportService.findById(id);
         return ResponseEntity.ok().body(report);
     }
 
     @PostMapping()
-    public ResponseEntity<Report> saveNewReport(@RequestBody ReportDTO reportDTO) {
+    public ResponseEntity<UserReport> saveNewReport(@RequestBody ReportDTO reportDTO) {
         //TODO: Atribuir report ao usuário logado
         //pega o usuário passado no dto (pelo id) no banco e atribui o report a ele
         User user = userService.findById(reportDTO.getReporterId());
 
-        Report report = new Report(
+        UserReport report = new UserReport(
             null,
             user,
             ReportType.valueOf(reportDTO.getReportType()),
             reportDTO.getReportValue()
         );
 
-        Report saved = reportService.insert(report);
+        UserReport saved = reportService.insert(report);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getId()).toUri();

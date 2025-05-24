@@ -12,7 +12,7 @@ import com.a3bradesco.api.entities.enums.ReportType;
 import com.a3bradesco.api.repositories.ReportRepository;
 import com.a3bradesco.api.repositories.UserRepository;
 
-import com.a3bradesco.api.entities.Report;
+import com.a3bradesco.api.entities.UserReport;
 
 @Configuration
 @Profile("test")
@@ -30,11 +30,11 @@ public class TestConfig implements CommandLineRunner {
         User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com", "123");
         User user3 = new User(null, "Caue", "33333333333", "caue@gmail.com", "123");
 
-        Report report1 = new Report(null, user1, ReportType.CPF, "12312312312");
-        Report report2 = new Report(null, user1, ReportType.CNPJ, "92.221.230000107");
-        Report report3 = new Report(null, user2, ReportType.EMAIL, "mockemail@gmail.com");
-        Report report4 = new Report(null, user2, ReportType.SITE, "mocksite.com.br");
-        Report report5 = new Report(null, user3, ReportType.CELLPHONE, "11988887777");
+        UserReport report1 = new UserReport(null, user1, ReportType.CPF, "12312312312");
+        UserReport report2 = new UserReport(null, user1, ReportType.CNPJ, "92.221.230000107");
+        UserReport report3 = new UserReport(null, user2, ReportType.EMAIL, "mockemail@gmail.com");
+        UserReport report4 = new UserReport(null, user2, ReportType.SITE, "mocksite.com.br");
+        UserReport report5 = new UserReport(null, user3, ReportType.CELLPHONE, "11988887777");
 
 		userRepository.saveAll(Arrays.asList(user1, user2, user3));
         

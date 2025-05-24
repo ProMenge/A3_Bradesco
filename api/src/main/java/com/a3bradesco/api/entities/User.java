@@ -25,7 +25,7 @@ public class User implements Serializable {
     private String password;
 
     @OneToMany(mappedBy = "reporter")
-    private Set<Report> reports = new HashSet<>();
+    private Set<UserReport> reports = new HashSet<>();
 
     public User(){
     }

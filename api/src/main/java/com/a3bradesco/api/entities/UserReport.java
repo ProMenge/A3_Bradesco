@@ -13,8 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_report")
-public class Report implements Serializable {
+@Table(name = "tb_user_report")
+public class UserReport implements Serializable {
 	private static final long serialVersionUID = 1L;
 
     @Id
@@ -27,9 +27,9 @@ public class Report implements Serializable {
     private int reportType;
     String reportValue;
 
-    public Report(){}
+    public UserReport(){}
     
-    public Report(Long id, User reporter, ReportType type, String reportValue) {
+    public UserReport(Long id, User reporter, ReportType type, String reportValue) {
         this.id = id;
         this.reporter = reporter;
         setReportType(type);
@@ -83,7 +83,7 @@ public class Report implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Report other = (Report) obj;
+        UserReport other = (UserReport) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
