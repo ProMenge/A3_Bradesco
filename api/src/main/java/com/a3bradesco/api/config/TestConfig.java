@@ -1,5 +1,6 @@
 package com.a3bradesco.api.config;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +8,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import com.a3bradesco.api.entities.CpfReport;
 import com.a3bradesco.api.entities.User;
+import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.entities.enums.ReportType;
+import com.a3bradesco.api.repositories.CpfReportRepository;
 import com.a3bradesco.api.repositories.UserReportRepository;
 import com.a3bradesco.api.repositories.UserRepository;
-
-import com.a3bradesco.api.entities.UserReport;
 
 @Configuration
 @Profile("test")
@@ -23,6 +25,9 @@ public class TestConfig implements CommandLineRunner {
 
     @Autowired
     private UserReportRepository reportRepository;
+
+    @Autowired
+    private CpfReportRepository cpfReportRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -36,8 +41,11 @@ public class TestConfig implements CommandLineRunner {
         UserReport report4 = new UserReport(null, user2, ReportType.SITE, "mocksite.com.br");
         UserReport report5 = new UserReport(null, user3, ReportType.CELLPHONE, "11988887777");
 
+        CpfReport cpfReport1 = new CpfReport("12312312312", 2, LocalDate.now());
+        CpfReport cpfReport2 = new CpfReport("12312312311", 1, LocalDate.now());
+
 		userRepository.saveAll(Arrays.asList(user1, user2, user3));
-        
         reportRepository.saveAll(Arrays.asList(report1, report2, report3, report4, report5));
+        cpfReportRepository.saveAll(Arrays.asList(cpfReport1, cpfReport2));
 	}
 }
