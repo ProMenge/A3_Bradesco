@@ -8,10 +8,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.entities.CpfReport;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.entities.enums.ReportType;
+import com.a3bradesco.api.repositories.CnpjReportRepository;
 import com.a3bradesco.api.repositories.CpfReportRepository;
 import com.a3bradesco.api.repositories.UserReportRepository;
 import com.a3bradesco.api.repositories.UserRepository;
@@ -29,6 +31,9 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private CpfReportRepository cpfReportRepository;
 
+    @Autowired
+    private CnpjReportRepository cnpjReportRepository;
+
 	@Override
 	public void run(String... args) throws Exception {
 		User user1 = new User(null, "Igor", "11111111111", "igor@gmail.com", "123");
@@ -44,6 +49,10 @@ public class TestConfig implements CommandLineRunner {
         CpfReport cpfReport1 = new CpfReport("12312312312", 2, LocalDate.now());
         CpfReport cpfReport2 = new CpfReport("12312312311", 1, LocalDate.now());
 
+        CnpjReport cnpjReport1 = new CnpjReport("77311267000124", 1, LocalDate.now());
+        CnpjReport cnpjReport2 = new CnpjReport("64788633000199", 2, LocalDate.now());
+
+        cnpjReportRepository.saveAll(Arrays.asList(cnpjReport1, cnpjReport2));
 		userRepository.saveAll(Arrays.asList(user1, user2, user3));
         reportRepository.saveAll(Arrays.asList(report1, report2, report3, report4, report5));
         cpfReportRepository.saveAll(Arrays.asList(cpfReport1, cpfReport2));
