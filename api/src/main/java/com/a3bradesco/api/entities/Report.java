@@ -2,6 +2,8 @@ package com.a3bradesco.api.entities;
 
 import java.io.Serializable;
 
+import com.a3bradesco.api.entities.enums.ReportType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,21 +24,16 @@ public class Report implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User reporter;
-
-    String cnpj;
-    String cpf;
-    String phoneNumber;
-    String site;
+    private int reportType;
+    String reportValue;
 
     public Report(){}
     
-    public Report(Long id, User reporter, String cnpj, String cpf, String phoneNumber, String site) {
+    public Report(Long id, User reporter, ReportType type, String reportValue) {
         this.id = id;
         this.reporter = reporter;
-        this.cnpj = cnpj;
-        this.cpf = cpf;
-        this.phoneNumber = phoneNumber;
-        this.site = site;
+        setReportType(type);
+        this.reportValue = reportValue;
     }
     
     public Long getId() {
@@ -51,29 +48,23 @@ public class Report implements Serializable {
     public void setReporter(User reporter) {
         this.reporter = reporter;
     }
-    public String getCnpj() {
-        return cnpj;
+    
+    public ReportType getReportType(){
+        return ReportType.valueOf(reportType);
     }
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+
+    public void setReportType(ReportType reportType){
+        if(reportType != null){
+            this.reportType = reportType.getCode();
+        }
     }
-    public String getCpf() {
-        return cpf;
+    
+    public String getReportValue() {
+        return reportValue;
     }
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-    public String getSite() {
-        return site;
-    }
-    public void setSite(String site) {
-        this.site = site;
+
+    public void setReportValue(String reportValue) {
+        this.reportValue = reportValue;
     }
 
     @Override
