@@ -80,7 +80,7 @@ export const Badge = styled.span<BadgeProps>`
         return "#f9a825"; // amarelo
       case "Telefone":
         return "#43a047"; // verde
-      case "URL":
+      case "URL/Site":
         return "#e53935"; // vermelho
       default:
         return "#757575"; // cinza

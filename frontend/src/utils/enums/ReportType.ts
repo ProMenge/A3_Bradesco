@@ -1,7 +1,7 @@
 export const ReportType = {
   CPF: "CPF",
   CNPJ: "CNPJ",
-  URL: "URL",
+  URL: "URL/Site",
   EMAIL: "Email",
   TELEFONE: "Telefone",
 } as const;
