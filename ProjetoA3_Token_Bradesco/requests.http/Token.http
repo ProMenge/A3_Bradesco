@@ -1,0 +1,11 @@
+### Gerar token
+POST http://localhost:8080/token
+Content-Type: text/plain
+
+João
+
+### Verificar token
+POST http://localhost:8080/token/verificar
+Content-Type: application/json
+
+{ "token": "190138" }
