@@ -44,7 +44,7 @@ class UserReportControllerTest {
         UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312");
         when(reportService.findAll()).thenReturn(Arrays.asList(report));
 
-        mockMvc.perform(get("/userreports"))
+        mockMvc.perform(get("/user-reports"))
                 .andExpect(status().isOk());
     }
 
@@ -53,7 +53,7 @@ class UserReportControllerTest {
         UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312");
         when(reportService.findById(1L)).thenReturn(report);
 
-        mockMvc.perform(get("/userreports/1"))
+        mockMvc.perform(get("/user-reports/1"))
                 .andExpect(status().isOk());
     }
 
