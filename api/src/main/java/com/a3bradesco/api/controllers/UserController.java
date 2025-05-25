@@ -5,16 +5,17 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.services.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -45,6 +46,18 @@ public class UserController {
 				  .buildAndExpand(userObj.getId()).toUri();
 
 		return ResponseEntity.created(uri).body(userObj);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteReport(@PathVariable Long id){
+        userService.deleteById(id);
+        User isDeleted = userService.findById(id);
+        if(isDeleted == null){
+            return ResponseEntity.ok("Usuário deletado com sucesso!");
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+        
     }
     
 }

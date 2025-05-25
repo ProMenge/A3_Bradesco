@@ -4,12 +4,13 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_user")
@@ -21,20 +22,18 @@ public class User implements Serializable {
     private Long id;
     private String name;
     private String cpf;
-    private String phone;
     private String email;
     private String password;
 
-    @OneToMany(mappedBy = "reporter")
-    private Set<Report> reports = new HashSet<>();
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserReport> reports = new HashSet<>();
 
     public User(){
     }
 
-    public User(Long id, String name, String cpf, String phone, String email, String password) {
+    public User(Long id, String name, String cpf, String email, String password) {
         this.name = name;
         this.cpf = cpf;
-        this.phone = phone;
         this.email = email;
         this.password = password;
     }
@@ -56,12 +55,6 @@ public class User implements Serializable {
     }
     public void setCpf(String cpf) {
         this.cpf = cpf;
-    }
-    public String getPhone() {
-        return phone;
-    }
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
     public String getEmail() {
         return email;
