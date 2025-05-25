@@ -34,7 +34,7 @@ export const GlobalCss = createGlobalStyle`
     list-style: none;
   }
   body {
-    background-color: ${colors.black};
+    background-color: #f5f5f5;
 
   }
 
