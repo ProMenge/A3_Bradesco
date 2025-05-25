@@ -31,7 +31,7 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void deveRetornarListaDeUsuarios() throws Exception {
+    void ReturnUsersList() throws Exception {
         User user = new User(1L, "Igor", "11111111111", "igor@gmail.com", "123");
         when(userService.findAll()).thenReturn(Arrays.asList(user));
 
@@ -40,7 +40,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void deveRetornarUsuarioPorId() throws Exception {
+    void ReturnUserbyId() throws Exception {
         User user = new User(1L, "Igor", "11111111111", "igor@gmail.com", "123");
         when(userService.findById(1L)).thenReturn(user);
 
@@ -49,7 +49,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void deveCriarNovoUsuario() throws Exception {
+    void CreateNewUser() throws Exception {
         User user = new User(1L, "Igor", "11111111111", "igor@gmail.com", "123");
         when(userService.insert(user)).thenReturn(user);
 

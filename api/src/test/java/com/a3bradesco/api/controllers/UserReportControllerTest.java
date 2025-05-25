@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -39,7 +40,7 @@ class UserReportControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void deveRetornarListaDeRelatorios() throws Exception {
+    void ReturnListOfUserReports() throws Exception {
         UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312");
         when(reportService.findAll()).thenReturn(Arrays.asList(report));
 
@@ -48,7 +49,7 @@ class UserReportControllerTest {
     }
 
     @Test
-    void deveRetornarRelatorioPorId() throws Exception {
+    void ReturnReportById() throws Exception {
         UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312");
         when(reportService.findById(1L)).thenReturn(report);
 
@@ -57,20 +58,21 @@ class UserReportControllerTest {
     }
 
     @Test
-    void deveCriarNovoRelatorio() throws Exception {
+    void CreateNewReport() throws Exception {
+        
+        User user = new User(1L, "Igor", "11111111111", "igor@gmail.com", "123");
         UserReportDTO dto = new UserReportDTO();
-        dto.setReporterId(1L);
+        dto.setReporterId(user.getId());
         dto.setReportType(ReportType.CPF.ordinal());
         dto.setReportValue("12312312312");
 
-        User user = new User(1L, "Igor", "11111111111", "igor@gmail.com", "123");
         UserReport report = new UserReport(1L, user, ReportType.CPF, "12312312312");
-        report.setId(1L);
-        when(userService.findById(1L)).thenReturn(user);
+
+        when(userService.findById(user.getId())).thenReturn(user);
         when(reportService.insert(any(UserReport.class))).thenReturn(report);
 
-
-        mockMvc.perform(post("/userreports")
+        
+        mockMvc.perform(post("/user-reports")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated());
