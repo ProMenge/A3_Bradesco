@@ -11,12 +11,14 @@ import org.springframework.context.annotation.Profile;
 import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.entities.CpfReport;
+import com.a3bradesco.api.entities.EmailReport;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.entities.enums.ReportType;
 import com.a3bradesco.api.repositories.CellphoneReportRepository;
 import com.a3bradesco.api.repositories.CnpjReportRepository;
 import com.a3bradesco.api.repositories.CpfReportRepository;
+import com.a3bradesco.api.repositories.EmailReportRepository;
 import com.a3bradesco.api.repositories.UserReportRepository;
 import com.a3bradesco.api.repositories.UserRepository;
 
@@ -34,6 +36,8 @@ public class TestConfig implements CommandLineRunner {
     private CnpjReportRepository cnpjReportRepository;
     @Autowired
     private CellphoneReportRepository cellphoneReportRepository;
+    @Autowired
+    private EmailReportRepository emailReportRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -56,6 +60,10 @@ public class TestConfig implements CommandLineRunner {
         CellphoneReport cellphoneReport1 = new CellphoneReport("11911223344", 3, LocalDate.now());
         CellphoneReport cellphoneReport2 = new CellphoneReport("11955667788", 4, LocalDate.now());
 
+        EmailReport emailReport1 = new EmailReport("igor452@gmail.com", 2, LocalDate.now());
+        EmailReport emailReport2 = new EmailReport("fred452@gmail.com", 3, LocalDate.now());
+
+        emailReportRepository.saveAll(Arrays.asList(emailReport1, emailReport2));
         cellphoneReportRepository.saveAll(Arrays.asList(cellphoneReport1, cellphoneReport2));
         cnpjReportRepository.saveAll(Arrays.asList(cnpjReport1, cnpjReport2));
 		userRepository.saveAll(Arrays.asList(user1, user2, user3));
