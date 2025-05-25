@@ -43,6 +43,7 @@ export const FormContainer = styled.div`
     text-decoration: none;
 
     align-self: flex-end;
+    cursor: pointer;
   }
 
   a:hover {

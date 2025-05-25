@@ -10,17 +10,21 @@ export const Login = () => {
   const [isRegistering, setIsRegistering] = useState(false);
 
   const loginSchema = Yup.object().shape({
-    identifier: Yup.string().required("Required"),
-    password: Yup.string().required("Required"),
+    identifier: Yup.string().required("Campo obrigatório"),
+    password: Yup.string().required("Campo obrigatório"),
   });
 
   const registerSchema = Yup.object().shape({
-    name: Yup.string().required("Required"),
-    identifier: Yup.string().email("Invalid email").required("Required"),
-    password: Yup.string().min(6, "Min 6 characters").required("Required"),
+    name: Yup.string().required("Campo obrigatório"),
+    identifier: Yup.string()
+      .email("E-mail inválido")
+      .required("Campo obrigatório"),
+    password: Yup.string()
+      .min(6, "A senha deve ter no mínimo 6 caracteres")
+      .required("Campo obrigatório"),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Passwords do not match")
-      .required("Required"),
+      .oneOf([Yup.ref("password")], "As senhas não coincidem")
+      .required("Campo obrigatório"),
   });
 
   const initialValues = {
@@ -32,9 +36,9 @@ export const Login = () => {
 
   const handleSubmit = (values: typeof initialValues) => {
     if (isRegistering) {
-      console.log("Registering:", values);
+      console.log("Cadastrando:", values);
     } else {
-      console.log("Logging in:", values);
+      console.log("Entrando:", values);
     }
   };
 
@@ -48,17 +52,19 @@ export const Login = () => {
         >
           {() => (
             <Form className="form-content">
-              <h1>{isRegistering ? "Get Started Now" : "Welcome Back!"}</h1>
+              <h1>
+                {isRegistering ? "Crie sua conta" : "Bem-vindo de volta!"}
+              </h1>
               <p>
                 {isRegistering
-                  ? "Create your account to start using the platform"
-                  : "Enter your Credentials to access your account"}
+                  ? "Preencha os campos para criar sua conta"
+                  : "Informe seus dados para acessar sua conta"}
               </p>
 
               {isRegistering && (
                 <div className="input-block">
-                  <label htmlFor="name">Name</label>
-                  <Field as={Input} name="name" placeholder="Enter your name" />
+                  <label htmlFor="name">Nome</label>
+                  <Field as={Input} name="name" placeholder="Insira seu nome" />
                   <ErrorMessage
                     name="name"
                     component="span"
@@ -68,11 +74,11 @@ export const Login = () => {
               )}
 
               <div className="input-block">
-                <label htmlFor="identifier">Email address or CPF</label>
+                <label htmlFor="identifier">E-mail ou CPF</label>
                 <Field
                   as={Input}
                   name="identifier"
-                  placeholder="Enter your email or CPF"
+                  placeholder="Insira seu e-mail ou CPF"
                 />
                 <ErrorMessage
                   name="identifier"
@@ -83,14 +89,14 @@ export const Login = () => {
 
               <div className="input-block">
                 <div className="label-wrapper">
-                  <label htmlFor="password">Password</label>
-                  {!isRegistering && <a href="#">Forgot password?</a>}
+                  <label htmlFor="password">Senha</label>
+                  {!isRegistering && <a href="#">Esqueceu a senha?</a>}
                 </div>
                 <Field
                   as={Input}
                   name="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="Insira sua senha"
                 />
                 <ErrorMessage
                   name="password"
@@ -101,12 +107,12 @@ export const Login = () => {
 
               {isRegistering && (
                 <div className="input-block">
-                  <label htmlFor="confirmPassword">Confirm Password</label>
+                  <label htmlFor="confirmPassword">Confirme a senha</label>
                   <Field
                     as={Input}
                     name="confirmPassword"
                     type="password"
-                    placeholder="Re-enter your password"
+                    placeholder="Insira novamente sua senha"
                   />
                   <ErrorMessage
                     name="confirmPassword"
@@ -117,20 +123,18 @@ export const Login = () => {
               )}
 
               <Button type="submit">
-                {isRegistering ? "Signup" : "Sign In"}
+                {isRegistering ? "Cadastrar" : "Entrar"}
               </Button>
 
               <div className="divider">
                 <hr />
-                <span>Or</span>
+                <span>ou</span>
               </div>
 
               <p className="signup-text">
-                {isRegistering
-                  ? "Have an account? "
-                  : "Don’t have an account? "}
+                {isRegistering ? "Já tem uma conta?" : "Não tem uma conta?"}
                 <a onClick={() => setIsRegistering(!isRegistering)}>
-                  {isRegistering ? "Sign In" : "Sign Up"}
+                  {isRegistering ? " Entrar" : " Criar conta"}
                 </a>
               </p>
             </Form>
