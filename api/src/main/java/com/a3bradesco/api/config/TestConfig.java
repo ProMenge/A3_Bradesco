@@ -12,6 +12,7 @@ import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.entities.CpfReport;
 import com.a3bradesco.api.entities.EmailReport;
+import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.entities.enums.ReportType;
@@ -19,6 +20,7 @@ import com.a3bradesco.api.repositories.CellphoneReportRepository;
 import com.a3bradesco.api.repositories.CnpjReportRepository;
 import com.a3bradesco.api.repositories.CpfReportRepository;
 import com.a3bradesco.api.repositories.EmailReportRepository;
+import com.a3bradesco.api.repositories.SiteReportRepository;
 import com.a3bradesco.api.repositories.UserReportRepository;
 import com.a3bradesco.api.repositories.UserRepository;
 
@@ -38,6 +40,8 @@ public class TestConfig implements CommandLineRunner {
     private CellphoneReportRepository cellphoneReportRepository;
     @Autowired
     private EmailReportRepository emailReportRepository;
+    @Autowired
+    private SiteReportRepository siteReportRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -63,6 +67,10 @@ public class TestConfig implements CommandLineRunner {
         EmailReport emailReport1 = new EmailReport("igor452@gmail.com", 2, LocalDate.now());
         EmailReport emailReport2 = new EmailReport("fred452@gmail.com", 3, LocalDate.now());
 
+        SiteReport siteReport1 = new SiteReport("sitefraude.com.br", 2, LocalDate.now());
+        SiteReport siteReport2 = new SiteReport("fraudesite.com.br", 4, LocalDate.now());
+
+        siteReportRepository.saveAll(Arrays.asList(siteReport1, siteReport2));
         emailReportRepository.saveAll(Arrays.asList(emailReport1, emailReport2));
         cellphoneReportRepository.saveAll(Arrays.asList(cellphoneReport1, cellphoneReport2));
         cnpjReportRepository.saveAll(Arrays.asList(cnpjReport1, cnpjReport2));
