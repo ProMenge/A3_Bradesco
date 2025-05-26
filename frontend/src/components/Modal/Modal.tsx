@@ -2,15 +2,19 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { ReportType } from "../../utils/enums/ReportType";
+import type { Report } from "../ReportList/ReportList";
 import * as S from "./styles";
 
 interface ModalProps {
   onClose: () => void;
+  editableReport?: Report | null;
 }
 
-export const Modal = ({ onClose }: ModalProps) => {
-  const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [data, setData] = useState("");
+export const Modal = ({ onClose, editableReport }: ModalProps) => {
+  const [selectedType, setSelectedType] = useState<string | null>(
+    editableReport?.reportType || null,
+  );
+  const [data, setData] = useState(editableReport?.dataValue || "");
 
   const getMaskByType = (type: string): string => {
     switch (type) {
@@ -19,7 +23,7 @@ export const Modal = ({ onClose }: ModalProps) => {
       case "CNPJ":
         return "00.000.000/0000-00";
       case "Telefone":
-        return "(00) 00000-0000";
+        return "(00)00000-0000";
       default:
         return ""; // Email e URL não precisam de máscara
     }
@@ -66,6 +70,10 @@ export const Modal = ({ onClose }: ModalProps) => {
     }
   };
 
+  const removeMask = (value: string): string => {
+    return value.replace(/[.\-()/\s]/g, "");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -74,8 +82,12 @@ export const Modal = ({ onClose }: ModalProps) => {
       if (!isValid) return;
 
       // Simula envio de denúncia (aqui entraria sua lógica futura de API)
+      const cleanData = removeMask(data);
+
       console.log("Tipo:", selectedType);
-      console.log("Valor denunciado:", data);
+      console.log("Valor denunciado (sem máscara):", cleanData);
+
+      // Aqui você usaria cleanData para enviar à API
       console.log(toast);
 
       toast.success("Denúncia enviada com sucesso!");

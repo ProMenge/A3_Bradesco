@@ -15,14 +15,15 @@ export const Header = () => {
     }
   };
 
-  const handleNavClick = (target: string) => {
+  const handleNavClick = (target: string, e?: React.MouseEvent) => {
+    e?.preventDefault();
+
     if (location.pathname !== "/") {
-      navigate("/");
-      // aguarda render e faz scroll
-      setTimeout(() => scrollToSection(target), 100);
+      localStorage.setItem("scrollTo", target);
     } else {
       scrollToSection(target);
     }
+
     setMenuOpen(false);
   };
 
@@ -41,9 +42,7 @@ export const Header = () => {
         <S.NavLink onClick={() => handleNavClick("denuncias")}>
           Minhas denúncias
         </S.NavLink>
-        <S.LogoutButton onClick={() => console.log("Deslogar")}>
-          Sair
-        </S.LogoutButton>
+        <S.LogoutButton onClick={() => navigate("/")}>Sair</S.LogoutButton>
       </S.Navi>
     </S.Container>
   );

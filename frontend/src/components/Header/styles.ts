@@ -33,9 +33,10 @@ export const NavLink = styled.a`
   color: #222;
   font-size: 1.2rem;
   position: relative;
+  cursor: pointer;
 
   &:hover {
-    color: #4a90e2;
+    color: #2ab280;
   }
 
   &::after {
@@ -43,7 +44,7 @@ export const NavLink = styled.a`
     display: block;
     width: 0%;
     height: 2px;
-    background-color: #4a90e2;
+    background-color: #2ab280;
     transition: width 0.3s;
     margin-top: 4px;
   }

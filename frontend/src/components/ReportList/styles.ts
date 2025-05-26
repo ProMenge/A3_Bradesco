@@ -8,6 +8,10 @@ interface NavProps {
   open: boolean;
 }
 
+interface ActionButtonProps {
+  delete?: boolean;
+}
+
 export const ListWrapper = styled.div`
   h3 {
     font-size: 1.61rem;
@@ -60,6 +64,35 @@ export const ReportItem = styled.li`
       margin: 0;
     }
   }
+
+  .actions {
+    margin-left: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .left {
+      margin-right: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .actions {
+      margin-left: 0;
+      margin-top: 1rem;
+      width: 100%;
+      align-items: center;
+    }
+
+    .actions button {
+      width: 100%;
+    }
+  }
 `;
 
 export const Badge = styled.span<BadgeProps>`
@@ -86,4 +119,22 @@ export const Badge = styled.span<BadgeProps>`
         return "#757575"; // cinza
     }
   }};
+`;
+
+export const ActionButton = styled.button<ActionButtonProps>`
+  background-color: ${({ delete: isDelete }) =>
+    isDelete ? "#8A0303" : "#2F4538"};
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background-color: ${({ delete: isDelete }) =>
+      isDelete ? "#c62828" : "#0E7A0D"};
+  }
 `;
