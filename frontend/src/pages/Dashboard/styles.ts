@@ -46,22 +46,4 @@ export const BottomSection = styled.div<BottomSectionProps>`
   padding: 2rem;
   overflow-y: auto;
   z-index: 0;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-color: rgba(
-      255,
-      255,
-      255,
-      0.2
-    ); /* tom claro com leve opacidade */
-    z-index: 1;
-  }
-
-  > * {
-    position: relative;
-    z-index: 2;
-  }
 `;
