@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +20,11 @@ import com.a3bradesco.api.dto.CnpjDTO;
 import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.services.CnpjReportService;
 
-
 @RestController
 @RequestMapping("/cnpj-reports")
+@CrossOrigin(origins = "http://localhost:5173")
 public class CnpjReportController {
-    
+
     @Autowired
     CnpjReportService cnpjReportService;
 
@@ -34,7 +35,7 @@ public class CnpjReportController {
     }
 
     @GetMapping("/{cnpj}")
-    public ResponseEntity<CnpjReport> findById(@PathVariable String cnpj){
+    public ResponseEntity<CnpjReport> findById(@PathVariable String cnpj) {
         CnpjReport report = cnpjReportService.findById(cnpj);
         return ResponseEntity.ok().body(report);
     }
@@ -44,31 +45,31 @@ public class CnpjReportController {
 
         CnpjReport cnpjInDatabase = cnpjReportService.findById(dto.getCnpj());
         CnpjReport report;
-        
-        if(cnpjInDatabase == null){
+
+        if (cnpjInDatabase == null) {
             report = new CnpjReport(dto.getCnpj(), 1, LocalDate.now());
-        } else{
+        } else {
             report = new CnpjReport(cnpjInDatabase.getCnpj(), cnpjInDatabase.getReportQuantity() + 1, LocalDate.now());
         }
 
         CnpjReport saved = cnpjReportService.insert(report);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                  .path("/{id}").buildAndExpand(saved.getCnpj()).toUri();
+                .path("/{id}").buildAndExpand(saved.getCnpj()).toUri();
 
         return ResponseEntity.created(uri).body(saved);
     }
 
     @DeleteMapping("/{cnpj}")
-    public ResponseEntity<String> deleteReport(@PathVariable String cnpj){
+    public ResponseEntity<String> deleteReport(@PathVariable String cnpj) {
         cnpjReportService.deleteById(cnpj);
         CnpjReport isDeleted = cnpjReportService.findById(cnpj);
-        if(isDeleted == null){
+        if (isDeleted == null) {
             return ResponseEntity.ok("Denúncia retirada com sucesso!");
         } else {
             return ResponseEntity.badRequest().build();
         }
-        
+
     }
-    
+
 }

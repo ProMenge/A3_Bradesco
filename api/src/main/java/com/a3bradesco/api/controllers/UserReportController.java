@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,11 +22,11 @@ import com.a3bradesco.api.entities.enums.ReportType;
 import com.a3bradesco.api.services.UserReportService;
 import com.a3bradesco.api.services.UserService;
 
-
 @RestController
 @RequestMapping("/user-reports")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserReportController {
-    
+
     @Autowired
     UserReportService reportService;
 
@@ -39,42 +40,41 @@ public class UserReportController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserReport> findById(@PathVariable Long id){
+    public ResponseEntity<UserReport> findById(@PathVariable Long id) {
         UserReport report = reportService.findById(id);
         return ResponseEntity.ok().body(report);
     }
 
     @PostMapping()
     public ResponseEntity<UserReport> saveNewReport(@RequestBody UserReportDTO reportDTO) {
-        //TODO: Atribuir report ao usuário logado
-        //pega o usuário passado no dto (pelo id) no banco e atribui o report a ele
+        // TODO: Atribuir report ao usuário logado
+        // pega o usuário passado no dto (pelo id) no banco e atribui o report a ele
         User user = userService.findById(reportDTO.getReporterId());
 
         UserReport report = new UserReport(
-            null,
-            user,
-            ReportType.valueOf(reportDTO.getReportType()),
-            reportDTO.getReportValue()
-        );
+                null,
+                user,
+                ReportType.valueOf(reportDTO.getReportType()),
+                reportDTO.getReportValue());
 
         UserReport saved = reportService.insert(report);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                  .path("/{id}").buildAndExpand(saved.getId()).toUri();
+                .path("/{id}").buildAndExpand(saved.getId()).toUri();
 
         return ResponseEntity.created(uri).body(saved);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteReport(@PathVariable Long id){
+    public ResponseEntity<String> deleteReport(@PathVariable Long id) {
         reportService.deleteById(id);
         User isDeleted = userService.findById(id);
-        if(isDeleted == null){
+        if (isDeleted == null) {
             return ResponseEntity.ok("Denúncia retirada com sucesso!");
         } else {
             return ResponseEntity.badRequest().build();
         }
-        
+
     }
-    
+
 }

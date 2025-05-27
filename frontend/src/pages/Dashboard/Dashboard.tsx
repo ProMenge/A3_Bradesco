@@ -4,6 +4,7 @@ import ListBackground from "../../assets/ReportBackground.jpg";
 import { Button } from "../../components/Button/Button";
 import { Header } from "../../components/Header/Header";
 import { Modal } from "../../components/Modal/Modal";
+import { api } from "../../services/api";
 import {
   type Report,
   ReportList,
@@ -69,6 +70,14 @@ export const Dashboard = () => {
       }
       localStorage.removeItem("scrollTo");
     }
+
+      api.get("/user-reports")
+    .then((res) => {
+      console.log("Usuários da API:", res.data);
+    })
+    .catch((err) => {
+      console.error("Erro ao buscar usuários:", err);
+    });
   }, []);
 
   return (

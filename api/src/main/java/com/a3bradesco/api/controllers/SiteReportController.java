@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +20,11 @@ import com.a3bradesco.api.dto.SiteDTO;
 import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.services.SiteReportService;
 
-
 @RestController
 @RequestMapping("/site-reports")
+@CrossOrigin(origins = "http://localhost:5173")
 public class SiteReportController {
-    
+
     @Autowired
     SiteReportService siteReportService;
 
@@ -34,7 +35,7 @@ public class SiteReportController {
     }
 
     @GetMapping("/{site}")
-    public ResponseEntity<SiteReport> findById(@PathVariable String site){
+    public ResponseEntity<SiteReport> findById(@PathVariable String site) {
         SiteReport report = siteReportService.findById(site);
         return ResponseEntity.ok().body(report);
     }
@@ -44,31 +45,32 @@ public class SiteReportController {
 
         SiteReport emailInDatabase = siteReportService.findById(dto.getSite());
         SiteReport report;
-        
-        if(emailInDatabase == null){
+
+        if (emailInDatabase == null) {
             report = new SiteReport(dto.getSite(), 1, LocalDate.now());
-        } else{
-            report = new SiteReport(emailInDatabase.getSite(), emailInDatabase.getReportQuantity() + 1, LocalDate.now());
+        } else {
+            report = new SiteReport(emailInDatabase.getSite(), emailInDatabase.getReportQuantity() + 1,
+                    LocalDate.now());
         }
 
         SiteReport saved = siteReportService.insert(report);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                  .path("/{id}").buildAndExpand(saved.getSite()).toUri();
+                .path("/{id}").buildAndExpand(saved.getSite()).toUri();
 
         return ResponseEntity.created(uri).body(saved);
     }
 
     @DeleteMapping("/{site}")
-    public ResponseEntity<String> deleteReport(@PathVariable String site){
+    public ResponseEntity<String> deleteReport(@PathVariable String site) {
         siteReportService.deleteById(site);
         SiteReport isDeleted = siteReportService.findById(site);
-        if(isDeleted == null){
+        if (isDeleted == null) {
             return ResponseEntity.ok("Denúncia retirada com sucesso!");
         } else {
             return ResponseEntity.badRequest().build();
         }
-        
+
     }
-    
+
 }

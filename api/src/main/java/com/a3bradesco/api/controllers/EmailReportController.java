@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +20,11 @@ import com.a3bradesco.api.dto.EmailDTO;
 import com.a3bradesco.api.entities.EmailReport;
 import com.a3bradesco.api.services.EmailReportService;
 
-
 @RestController
 @RequestMapping("/email-reports")
+@CrossOrigin(origins = "http://localhost:5173")
 public class EmailReportController {
-    
+
     @Autowired
     EmailReportService emailReportService;
 
@@ -34,7 +35,7 @@ public class EmailReportController {
     }
 
     @GetMapping("/{email}")
-    public ResponseEntity<EmailReport> findById(@PathVariable String email){
+    public ResponseEntity<EmailReport> findById(@PathVariable String email) {
         EmailReport report = emailReportService.findById(email);
         return ResponseEntity.ok().body(report);
     }
@@ -44,31 +45,32 @@ public class EmailReportController {
 
         EmailReport emailInDatabase = emailReportService.findById(dto.getEmail());
         EmailReport report;
-        
-        if(emailInDatabase == null){
+
+        if (emailInDatabase == null) {
             report = new EmailReport(dto.getEmail(), 1, LocalDate.now());
-        } else{
-            report = new EmailReport(emailInDatabase.getEmail(), emailInDatabase.getReportQuantity() + 1, LocalDate.now());
+        } else {
+            report = new EmailReport(emailInDatabase.getEmail(), emailInDatabase.getReportQuantity() + 1,
+                    LocalDate.now());
         }
 
         EmailReport saved = emailReportService.insert(report);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                  .path("/{id}").buildAndExpand(saved.getEmail()).toUri();
+                .path("/{id}").buildAndExpand(saved.getEmail()).toUri();
 
         return ResponseEntity.created(uri).body(saved);
     }
 
     @DeleteMapping("/{email}")
-    public ResponseEntity<String> deleteReport(@PathVariable String email){
+    public ResponseEntity<String> deleteReport(@PathVariable String email) {
         emailReportService.deleteById(email);
         EmailReport isDeleted = emailReportService.findById(email);
-        if(isDeleted == null){
+        if (isDeleted == null) {
             return ResponseEntity.ok("Denúncia retirada com sucesso!");
         } else {
             return ResponseEntity.badRequest().build();
         }
-        
+
     }
-    
+
 }

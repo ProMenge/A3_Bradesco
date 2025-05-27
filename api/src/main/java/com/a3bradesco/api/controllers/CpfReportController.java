@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +20,11 @@ import com.a3bradesco.api.dto.CpfDTO;
 import com.a3bradesco.api.entities.CpfReport;
 import com.a3bradesco.api.services.CpfReportService;
 
-
 @RestController
 @RequestMapping("/cpf-reports")
+@CrossOrigin(origins = "http://localhost:5173")
 public class CpfReportController {
-    
+
     @Autowired
     CpfReportService cpfReportService;
 
@@ -34,7 +35,7 @@ public class CpfReportController {
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<CpfReport> findById(@PathVariable String cpf){
+    public ResponseEntity<CpfReport> findById(@PathVariable String cpf) {
         CpfReport report = cpfReportService.findById(cpf);
         return ResponseEntity.ok().body(report);
     }
@@ -44,31 +45,31 @@ public class CpfReportController {
 
         CpfReport cpfInDatabase = cpfReportService.findById(dto.getCpf());
         CpfReport report;
-        
-        if(cpfInDatabase == null){
+
+        if (cpfInDatabase == null) {
             report = new CpfReport(dto.getCpf(), 1, LocalDate.now());
-        } else{
+        } else {
             report = new CpfReport(cpfInDatabase.getCpf(), cpfInDatabase.getReportQuantity() + 1, LocalDate.now());
         }
 
         CpfReport saved = cpfReportService.insert(report);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                  .path("/{id}").buildAndExpand(saved.getCpf()).toUri();
+                .path("/{id}").buildAndExpand(saved.getCpf()).toUri();
 
         return ResponseEntity.created(uri).body(saved);
     }
 
     @DeleteMapping("/{cpf}")
-    public ResponseEntity<String> deleteReport(@PathVariable String cpf){
+    public ResponseEntity<String> deleteReport(@PathVariable String cpf) {
         cpfReportService.deleteById(cpf);
         CpfReport isDeleted = cpfReportService.findById(cpf);
-        if(isDeleted == null){
+        if (isDeleted == null) {
             return ResponseEntity.ok("Denúncia retirada com sucesso!");
         } else {
             return ResponseEntity.badRequest().build();
         }
-        
+
     }
-    
+
 }
