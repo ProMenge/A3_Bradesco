@@ -75,8 +75,14 @@ export const Login = () => {
       const { identifier, password } = values;
 
       try {
-        const cleanIdentifier = identifier.replace(/\D/g, "");
-        const user = await loginUser({ identifier: cleanIdentifier, password });
+        const isCpf = /^\d{11}$/.test(identifier.replace(/\D/g, ""));
+        const formattedIdentifier = isCpf
+          ? identifier.replace(/\D/g, "")
+          : identifier;
+        const user = await loginUser({
+          identifier: formattedIdentifier,
+          password,
+        });
         toast.success("Login realizado com sucesso!");
         login(user);
         navigate("/dashboard");
