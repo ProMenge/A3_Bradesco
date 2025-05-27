@@ -4,57 +4,24 @@ import ListBackground from "../../assets/ReportBackground.jpg";
 import { Button } from "../../components/Button/Button";
 import { Header } from "../../components/Header/Header";
 import { Modal } from "../../components/Modal/Modal";
+import { formatValue } from "../../utils/format";
 import { api } from "../../services/api";
+import { useAuth } from "../../hooks/useAuth";
+import { getUserReports } from "../../services/reportService";
 import {
   type Report,
   ReportList,
 } from "../../components/ReportList/ReportList";
 
-import { ReportType } from "../../utils/enums/ReportType";
+import { ReportType, type ReportTypeValue } from "../../utils/enums/ReportType";
 
 import * as S from "./styles";
 
 export const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reports, setReports] = useState<Report[]>([
-    {
-      id: 1,
-      reportType: ReportType.CPF,
-      dataValue: "123.456.789-00",
-      date: "Hoje, 14:22",
-    },
-    {
-      id: 2,
-      reportType: ReportType.TELEFONE,
-      dataValue: "(11) 91234-5678",
-      date: "Ontem, 09:10",
-    },
-    {
-      id: 3,
-      reportType: ReportType.URL,
-      dataValue: "http://site-falso.com.br/",
-      date: "12/07/2025, 18:45",
-    },
-    {
-      id: 4,
-      reportType: ReportType.TELEFONE,
-      dataValue: "(11) 987891244",
-      date: "12/07/2025, 18:45",
-    },
-    {
-      id: 5,
-      reportType: ReportType.CNPJ,
-      dataValue: "14.725.528/0001-32",
-      date: "11/07/2025, 12:25",
-    },
-    {
-      id: 6,
-      reportType: ReportType.EMAIL,
-      dataValue: "reported@gmail.com",
-      date: "09/04/2025, 08:11",
-    },
-    // ... (demais itens que você tinha antes)
-  ]);
+  const [reports, setReports] = useState<Report[]>([]);
+
+  const { user } = useAuth();
 
   const handleDelete = (id: number) => {
     setReports((prev) => prev.filter((r) => r.id !== id));
@@ -71,14 +38,40 @@ export const Dashboard = () => {
       localStorage.removeItem("scrollTo");
     }
 
-      api.get("/user-reports")
-    .then((res) => {
-      console.log("Usuários da API:", res.data);
-    })
-    .catch((err) => {
-      console.error("Erro ao buscar usuários:", err);
-    });
-  }, []);
+    const fetchReports = async () => {
+      try {
+        const allReports = await getUserReports();
+
+        // Filtra apenas os reports do usuário logado
+        const userReports = allReports
+          .filter((r) => r.reporter.id === user?.id)
+          .map((r) => ({
+            id: r.id,
+            reportType: r.reportType as ReportTypeValue,
+            dataValue: formatValue(
+              r.reportType as ReportTypeValue,
+              r.reportValue,
+            ),
+            date: new Date().toLocaleString("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          }));
+
+        setReports(userReports);
+      } catch (err) {
+        toast.error("Erro ao buscar denúncias.");
+        console.error(err);
+      }
+    };
+
+    if (user) {
+      fetchReports();
+    }
+  }, [user]);
 
   return (
     <S.Container>

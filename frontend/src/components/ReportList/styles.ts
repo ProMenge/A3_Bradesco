@@ -115,8 +115,11 @@ export const Badge = styled.span<BadgeProps>`
         return "#43a047"; // verde
       case "URL/Site":
         return "#e53935"; // vermelho
+      case "CELLPHONE":
+        return "#43a047";
       default:
         return "#757575"; // cinza
+
     }
   }};
 `;
