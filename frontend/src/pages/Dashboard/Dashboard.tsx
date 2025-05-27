@@ -4,16 +4,15 @@ import ListBackground from "../../assets/ReportBackground.jpg";
 import { Button } from "../../components/Button/Button";
 import { Header } from "../../components/Header/Header";
 import { Modal } from "../../components/Modal/Modal";
-import { formatValue } from "../../utils/format";
-import { api } from "../../services/api";
-import { useAuth } from "../../hooks/useAuth";
-import { getUserReports } from "../../services/reportService";
 import {
   type Report,
   ReportList,
 } from "../../components/ReportList/ReportList";
+import { useAuth } from "../../hooks/useAuth";
+import { deleteReport, getUserReports } from "../../services/reportService";
+import { formatValue } from "../../utils/format";
 
-import { ReportType, type ReportTypeValue } from "../../utils/enums/ReportType";
+import { type ReportTypeValue } from "../../utils/enums/ReportType";
 
 import * as S from "./styles";
 
@@ -23,9 +22,15 @@ export const Dashboard = () => {
 
   const { user } = useAuth();
 
-  const handleDelete = (id: number) => {
-    setReports((prev) => prev.filter((r) => r.id !== id));
-    toast.success("Denúncia removida com sucesso!");
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteReport(id);
+      setReports((prev) => prev.filter((r) => r.id !== id));
+      toast.success("Denúncia removida com sucesso!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Erro ao remover denúncia. Tente novamente.");
+    }
   };
 
   useEffect(() => {

@@ -66,15 +66,9 @@ public class UserReportController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteReport(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteReport(@PathVariable Long id) {
         reportService.deleteById(id);
-        User isDeleted = userService.findById(id);
-        if (isDeleted == null) {
-            return ResponseEntity.ok("Denúncia retirada com sucesso!");
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-
+        return ResponseEntity.noContent().build();
     }
 
 }

@@ -2,9 +2,10 @@ export const ReportType = {
   CPF: "CPF",
   CNPJ: "CNPJ",
   URL: "URL/Site",
-  EMAIL: "Email",
+  SITE: "SITE",
+  EMAIL: "EMAIL",
   TELEFONE: "Telefone",
-  CELLPHONE: "CELLPHONE"
+  CELLPHONE: "CELLPHONE",
 } as const;
 
 export type ReportTypeKey = keyof typeof ReportType;
