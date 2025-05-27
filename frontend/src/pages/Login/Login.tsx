@@ -1,24 +1,49 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import ReactInputMask from "react-input-mask";
 import * as Yup from "yup";
 import LoginBackground from "../../assets/LoginBackground.png";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 import * as S from "./styles";
 
+import { loginUser, registerUser } from "../../services/authService";
+import { useAuth } from "../../hooks/useAuth";
+
 export const Login = () => {
   const [isRegistering, setIsRegistering] = useState(false);
+  const { login } = useAuth();
+
+  const navigate = useNavigate();
 
   const loginSchema = Yup.object().shape({
-    identifier: Yup.string().required("Campo obrigatório"),
+    identifier: Yup.string()
+      .required("Campo obrigatório")
+      .test("emailOrCpf", "E-mail ou CPF inválido", (value) => {
+        if (!value) return false;
+
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        const isCpf = /^\d{11}$/.test(value.replace(/\D/g, ""));
+
+        return isEmail || isCpf;
+      }),
     password: Yup.string().required("Campo obrigatório"),
   });
 
   const registerSchema = Yup.object().shape({
     name: Yup.string().required("Campo obrigatório"),
     identifier: Yup.string()
-      .email("E-mail inválido")
-      .required("Campo obrigatório"),
+      .required("Campo obrigatório")
+      .test("emailOrCpf", "E-mail ou CPF inválido", (value) => {
+        if (!value) return false;
+
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        const isCpf = /^\d{11}$/.test(value.replace(/\D/g, ""));
+
+        return isEmail || isCpf;
+      }),
     password: Yup.string()
       .min(6, "A senha deve ter no mínimo 6 caracteres")
       .required("Campo obrigatório"),
@@ -34,11 +59,30 @@ export const Login = () => {
     confirmPassword: "",
   };
 
-  const handleSubmit = (values: typeof initialValues) => {
+  const handleSubmit = async (values: typeof initialValues) => {
     if (isRegistering) {
-      console.log("Cadastrando:", values);
+      const { name, identifier, password } = values;
+
+      try {
+        const cleanIdentifier = identifier.replace(/\D/g, "");
+        await registerUser({ name, identifier: cleanIdentifier, password });
+        toast.success("Usuário cadastrado com sucesso!");
+        setIsRegistering(false);
+      } catch (err: any) {
+        toast.error(err.message || "Erro ao cadastrar.");
+      }
     } else {
-      console.log("Entrando:", values);
+      const { identifier, password } = values;
+
+      try {
+        const cleanIdentifier = identifier.replace(/\D/g, "");
+        const user = await loginUser({ identifier: cleanIdentifier, password });
+        toast.success("Login realizado com sucesso!");
+        login(user);
+        navigate("/dashboard");
+      } catch (err: any) {
+        toast.error(err.message || "Erro ao fazer login.");
+      }
     }
   };
 

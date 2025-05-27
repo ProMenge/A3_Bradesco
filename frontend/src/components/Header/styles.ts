@@ -12,6 +12,16 @@ export const Container = styled.header`
   justify-content: space-between;
   max-width: 1280px;
   margin: 0 auto;
+
+  p{
+  margin-left: 1.8rem;
+  text-decoration: none;
+  font-weight: 500;
+  color: #222;
+  font-size: 1.2rem;
+  position: relative;
+  cursor: pointer;
+  }
 `;
 
 export const LogoWrapper = styled.div`
