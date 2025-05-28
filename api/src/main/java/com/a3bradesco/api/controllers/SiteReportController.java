@@ -61,14 +61,24 @@ public class SiteReportController {
 
     @DeleteMapping("/{site}")
     public ResponseEntity<String> deleteReport(@PathVariable String site){
-        siteReportService.deleteById(site);
-        SiteReport isDeleted = siteReportService.findById(site);
-        if(isDeleted == null){
-            return ResponseEntity.ok("Denúncia retirada com sucesso!");
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-        
+    SiteReport currentDatabaseReport = siteReportService.findById(site);
+
+    if(currentDatabaseReport == null) {
+        return ResponseEntity.notFound().build();
     }
-    
+    if(currentDatabaseReport.getReportQuantity() <= 1){
+        siteReportService.deleteById(site);
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+    } else {
+        SiteReport newDatabaseReport = 
+        new SiteReport(
+            currentDatabaseReport.getSite(), 
+            currentDatabaseReport.getReportQuantity() - 1, 
+            currentDatabaseReport.getLastTimeReported());
+
+        siteReportService.insert(newDatabaseReport);
+
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        }
+    }
 }
