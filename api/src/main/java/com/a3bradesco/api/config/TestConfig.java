@@ -1,6 +1,7 @@
 package com.a3bradesco.api.config;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +50,11 @@ public class TestConfig implements CommandLineRunner {
         User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com", "123");
         User user3 = new User(null, "Caue", "33333333333", "caue@gmail.com", "123");
 
-        UserReport report1 = new UserReport(null, user1, ReportType.CPF, "12312312312");
-        UserReport report2 = new UserReport(null, user1, ReportType.CNPJ, "92.221.230000107");
-        UserReport report3 = new UserReport(null, user2, ReportType.EMAIL, "mockemail@gmail.com");
-        UserReport report4 = new UserReport(null, user2, ReportType.SITE, "mocksite.com.br");
-        UserReport report5 = new UserReport(null, user3, ReportType.CELLPHONE, "11988887777");
+        UserReport report1 = new UserReport(null, user1, ReportType.CPF, "12312312312", LocalDateTime.now());
+        UserReport report2 = new UserReport(null, user1, ReportType.CNPJ, "92221230000107", LocalDateTime.now());
+        UserReport report3 = new UserReport(null, user2, ReportType.EMAIL, "mockemail@gmail.com", LocalDateTime.now());
+        UserReport report4 = new UserReport(null, user2, ReportType.SITE, "mocksite.com.br", LocalDateTime.now());
+        UserReport report5 = new UserReport(null, user3, ReportType.CELLPHONE, "11988887777", LocalDateTime.now());
 
         CpfReport cpfReport1 = new CpfReport("12312312312", 2, LocalDate.now());
         CpfReport cpfReport2 = new CpfReport("12312312311", 1, LocalDate.now());

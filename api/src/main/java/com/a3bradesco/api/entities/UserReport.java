@@ -2,6 +2,7 @@ package com.a3bradesco.api.entities;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import com.a3bradesco.api.entities.enums.ReportType;
 
@@ -58,7 +59,7 @@ public class UserReport implements Serializable {
         this.reporter = reporter;
     }
     public LocalDateTime getReportMoment() {
-        return reportMoment;
+        return reportMoment.truncatedTo(ChronoUnit.SECONDS);
     }
     public void setReportMoment(LocalDateTime reportMoment) {
         this.reportMoment = reportMoment;
