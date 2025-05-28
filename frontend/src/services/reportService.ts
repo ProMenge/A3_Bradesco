@@ -1,3 +1,4 @@
+import type { ReportTypeValue } from "../utils/enums/ReportType";
 import { api } from "./api";
 
 export interface ReportDTO {
@@ -15,7 +16,7 @@ export interface ReportDTO {
 
 export interface CreateReportDTO {
   reporterId: number;
-  reportType: string;
+  reportTypeCode: number;
   reportValue: string;
 }
 

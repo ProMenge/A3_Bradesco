@@ -52,9 +52,9 @@ export const Dashboard = () => {
           .filter((r) => r.reporter.id === user?.id)
           .map((r) => ({
             id: r.id,
-            reportType: r.reportType as ReportTypeValue,
+            reportType: Number(r.reportType) as ReportTypeValue,
             dataValue: formatValue(
-              r.reportType as ReportTypeValue,
+              Number(r.reportType) as ReportTypeValue,
               r.reportValue,
             ),
             date: new Date().toLocaleString("pt-BR", {
@@ -103,7 +103,12 @@ export const Dashboard = () => {
         <ReportList reports={reports} onDelete={handleDelete} />
       </S.BottomSection>
 
-      {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <Modal
+          onClose={() => setIsModalOpen(false)}
+          onAdd={(newReport) => setReports((prev) => [...prev, newReport])}
+        />
+      )}
     </S.Container>
   );
 };

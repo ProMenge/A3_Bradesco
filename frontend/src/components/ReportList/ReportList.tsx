@@ -1,4 +1,5 @@
 import { type ReportTypeValue } from "../../utils/enums/ReportType";
+import { ReportTypeLabel } from "../../utils/enums/ReportType";
 import * as S from "./styles";
 
 export interface Report {
@@ -13,6 +14,7 @@ interface ReportListProps {
 }
 
 export const ReportList = ({ reports, onDelete }: ReportListProps) => {
+  console.log(reports);
   return (
     <S.ListWrapper>
       <h3>Minhas denúncias</h3>
@@ -26,7 +28,9 @@ export const ReportList = ({ reports, onDelete }: ReportListProps) => {
             <div className="right">
               <div className="title-line">
                 <h4>Golpe via Pix</h4>
-                <S.Badge type={report.reportType}>{report.reportType}</S.Badge>
+                <S.Badge type={ReportTypeLabel[report.reportType]}>
+                  {ReportTypeLabel[report.reportType]}
+                </S.Badge>
               </div>
               <p>
                 Dado denunciado: <strong>{report.dataValue}</strong>

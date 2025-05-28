@@ -2,19 +2,23 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { ReportType } from "../../utils/enums/ReportType";
-import type { Report } from "../ReportList/ReportList";
+import { useAuth } from "../../hooks/useAuth";
+import { createReport } from "../../services/reportService";
 import * as S from "./styles";
+import { formatValue } from "../../utils/format";
+import type { Report } from "../ReportList/ReportList";
 
 interface ModalProps {
   onClose: () => void;
-  editableReport?: Report | null;
+  onAdd: (report: Report) => void;
 }
 
-export const Modal = ({ onClose, editableReport }: ModalProps) => {
-  const [selectedType, setSelectedType] = useState<string | null>(
-    editableReport?.reportType || null,
-  );
-  const [data, setData] = useState(editableReport?.dataValue || "");
+export const Modal = ({ onClose, onAdd }: ModalProps) => {
+  const [selectedType, setSelectedType] = useState<
+    keyof typeof ReportType | null
+  >(null);
+  const [data, setData] = useState("");
+  const { user } = useAuth();
 
   const getMaskByType = (type: string): string => {
     switch (type) {
@@ -22,47 +26,37 @@ export const Modal = ({ onClose, editableReport }: ModalProps) => {
         return "000.000.000-00";
       case "CNPJ":
         return "00.000.000/0000-00";
-      case "Telefone":
+      case "CELLPHONE":
         return "(00)00000-0000";
       default:
-        return ""; // Email e URL não precisam de máscara
+        return "";
     }
   };
 
   const validate = async (type: string, value: string): Promise<boolean> => {
     try {
-      const base = value.trim();
-
-      let schema: Yup.StringSchema = Yup.string().required("Campo obrigatório");
-
-      switch (type) {
-        case "CPF":
-          schema = schema.matches(
-            /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
-            "CPF inválido",
-          );
-          break;
-        case "CNPJ":
-          schema = schema.matches(
-            /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/,
-            "CNPJ inválido",
-          );
-          break;
-        case "Telefone":
-          schema = schema.matches(
-            /^\(\d{2}\)\s\d{5}-\d{4}$/,
-            "Telefone inválido",
-          );
-          break;
-        case "Email":
-          schema = Yup.string().email("E-mail inválido").required();
-          break;
-        case "URL":
-          schema = Yup.string().url("URL inválida").required();
-          break;
-      }
-
-      await schema.validate(base);
+      const schemaMap: Record<string, Yup.StringSchema> = {
+        CPF: Yup.string().matches(
+          /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+          "CPF inválido",
+        ),
+        CNPJ: Yup.string().matches(
+          /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/,
+          "CNPJ inválido",
+        ),
+        CELLPHONE: Yup.string().matches(
+          /^\(\d{2}\)\s?\d{5}-\d{4}$/,
+          "Telefone inválido",
+        ),
+        EMAIL: Yup.string().email("E-mail inválido"),
+        SITE: Yup.string().matches(
+          /^(?!:\/\/)([a-zA-Z0-9-_]+\.)+[a-zA-Z]{2,}$/,
+          "URL inválida",
+        ),
+      };
+      await (schemaMap[type]?.required() || Yup.string().required()).validate(
+        value.trim(),
+      );
       return true;
     } catch (err: any) {
       alert(err.message);
@@ -70,30 +64,51 @@ export const Modal = ({ onClose, editableReport }: ModalProps) => {
     }
   };
 
-  const removeMask = (value: string): string => {
-    return value.replace(/[.\-()/\s]/g, "");
-  };
+  const removeMask = (value: string): string =>
+    value.replace(/[.\-()/\s]/g, "");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!selectedType) return;
+
+    const isValid = await validate(selectedType, data);
+    if (!isValid) return;
+
+    const cleanValue = removeMask(data);
+    if (!user) {
+      toast.error("Você precisa estar logado para enviar a denúncia.");
+      return;
+    }
+
     try {
-      const isValid = await validate(selectedType!, data);
-      if (!isValid) return;
+      const reportTypeCode = ReportType[selectedType]; // isso gera o número
 
-      // Simula envio de denúncia (aqui entraria sua lógica futura de API)
-      const cleanData = removeMask(data);
+      const saved = await createReport({
+        reporterId: user.id,
+        reportTypeCode,
+        reportValue: cleanValue,
+      });
 
-      console.log("Tipo:", selectedType);
-      console.log("Valor denunciado (sem máscara):", cleanData);
+      const formattedReport: Report = {
+        id: saved.id,
+        reportType: reportTypeCode,
+        dataValue: formatValue(reportTypeCode, cleanValue),
+        date: new Date().toLocaleString("pt-BR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
 
-      // Aqui você usaria cleanData para enviar à API
-      console.log(toast);
-
+      onAdd(formattedReport);
       toast.success("Denúncia enviada com sucesso!");
       onClose();
-    } catch (err: any) {
-      toast.error("Ocorreu um erro ao enviar a denúncia.");
+    } catch (err) {
+      toast.error("Erro ao enviar denúncia.");
+      console.error(err);
     }
   };
 
@@ -106,8 +121,13 @@ export const Modal = ({ onClose, editableReport }: ModalProps) => {
           <>
             <h2>Selecione o tipo de denúncia</h2>
             <S.TypeList>
-              {Object.values(ReportType).map((type) => (
-                <button key={type} onClick={() => setSelectedType(type)}>
+              {Object.keys(ReportType).map((type) => (
+                <button
+                  key={type}
+                  onClick={() =>
+                    setSelectedType(type as keyof typeof ReportType)
+                  }
+                >
                   {type}
                 </button>
               ))}
@@ -119,7 +139,7 @@ export const Modal = ({ onClose, editableReport }: ModalProps) => {
             <form onSubmit={handleSubmit}>
               <label>
                 Informe o {selectedType.toUpperCase()}:
-                {["CPF", "CNPJ", "Telefone"].includes(selectedType) ? (
+                {["CPF", "CNPJ", "CELLPHONE"].includes(selectedType) ? (
                   <S.MaskedInput
                     mask={getMaskByType(selectedType)}
                     value={data}
