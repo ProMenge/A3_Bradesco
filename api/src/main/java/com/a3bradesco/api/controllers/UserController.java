@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteReport(@PathVariable Long id){
+    public ResponseEntity<String> deleteUser(@PathVariable Long id){
         userService.deleteById(id);
         User isDeleted = userService.findById(id);
         if(isDeleted == null){

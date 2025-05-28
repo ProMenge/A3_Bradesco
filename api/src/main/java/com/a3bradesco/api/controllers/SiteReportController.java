@@ -42,13 +42,13 @@ public class SiteReportController {
     @PostMapping()
     public ResponseEntity<SiteReport> saveNewReport(@RequestBody SiteDTO dto) {
 
-        SiteReport emailInDatabase = siteReportService.findById(dto.getSite());
+        SiteReport siteInDatabase = siteReportService.findById(dto.getSite());
         SiteReport report;
         
-        if(emailInDatabase == null){
+        if(siteInDatabase == null){
             report = new SiteReport(dto.getSite(), 1, LocalDate.now());
         } else{
-            report = new SiteReport(emailInDatabase.getSite(), emailInDatabase.getReportQuantity() + 1, LocalDate.now());
+            report = new SiteReport(siteInDatabase.getSite(), siteInDatabase.getReportQuantity() + 1, LocalDate.now());
         }
 
         SiteReport saved = siteReportService.insert(report);

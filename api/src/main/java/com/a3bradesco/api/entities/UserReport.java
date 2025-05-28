@@ -1,10 +1,13 @@
 package com.a3bradesco.api.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import com.a3bradesco.api.entities.enums.ReportType;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,19 +26,25 @@ public class UserReport implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    User reporter;
-    private int reportType;
-    String reportValue;
+    private User reporter;
+
+    @Enumerated(EnumType.STRING)
+    private ReportType reportType;
+    
+    private String reportValue;
+    private LocalDateTime reportMoment;
+    
 
     public UserReport(){}
     
-    public UserReport(Long id, User reporter, ReportType type, String reportValue) {
+    public UserReport(Long id, User reporter, ReportType type, String reportValue, LocalDateTime reportMoment) {
         this.id = id;
         this.reporter = reporter;
-        setReportType(type);
+        this.reportType = type;
         this.reportValue = reportValue;
-    }
-    
+        this.reportMoment = reportMoment;
+    }    
+
     public Long getId() {
         return id;
     }
@@ -48,21 +57,21 @@ public class UserReport implements Serializable {
     public void setReporter(User reporter) {
         this.reporter = reporter;
     }
-    
-    public ReportType getReportType(){
-        return ReportType.valueOf(reportType);
+    public LocalDateTime getReportMoment() {
+        return reportMoment;
     }
-
-    public void setReportType(ReportType reportType){
-        if(reportType != null){
-            this.reportType = reportType.getCode();
-        }
+    public void setReportMoment(LocalDateTime reportMoment) {
+        this.reportMoment = reportMoment;
     }
-    
+    public ReportType getReportType() {
+        return reportType;
+    }
+    public void setReportType(ReportType reportType) {
+        this.reportType = reportType;
+    }
     public String getReportValue() {
         return reportValue;
     }
-
     public void setReportValue(String reportValue) {
         this.reportValue = reportValue;
     }

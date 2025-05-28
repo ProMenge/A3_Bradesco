@@ -1,6 +1,7 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,9 @@ public class UserReportController {
         UserReport report = new UserReport(
             null,
             user,
-            ReportType.valueOf(reportDTO.getReportType()),
-            reportDTO.getReportValue()
+            reportDTO.getReportType(),
+            reportDTO.getReportValue(), 
+            LocalDateTime.now()
         );
 
         UserReport saved = reportService.insert(report);

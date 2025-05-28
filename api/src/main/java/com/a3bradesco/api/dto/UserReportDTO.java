@@ -1,9 +1,11 @@
 package com.a3bradesco.api.dto;
 
+import com.a3bradesco.api.entities.enums.ReportType;
+
 public class UserReportDTO {
 
     private Long reporterId;
-    private int reportTypeCode;
+    private ReportType reportType;
     String reportValue;
 
     // Getters e Setters
@@ -15,20 +17,20 @@ public class UserReportDTO {
         this.reporterId = reporterId;
     }
 
-    public int getReportType() {
-        return reportTypeCode;
-    }
-
-    public void setReportType(int reportTypeCode) {
-        this.reportTypeCode = reportTypeCode;
-    }
-
     public String getReportValue() {
         return reportValue;
     }
 
     public void setReportValue(String reportValue) {
         this.reportValue = reportValue;
+    }
+
+    public ReportType getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(ReportType reportType) {
+        this.reportType = reportType;
     }
 
 }
