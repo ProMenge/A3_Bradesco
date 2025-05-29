@@ -1,7 +1,6 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.a3bradesco.api.dto.CellphoneDTO;
 import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.services.CellphoneReportService;
+
+import jakarta.persistence.EntityNotFoundException;
 
 
 @RestController
@@ -41,17 +42,7 @@ public class CellphoneReportController {
 
     @PostMapping()
     public ResponseEntity<CellphoneReport> saveNewReport(@RequestBody CellphoneDTO dto) {
-
-        CellphoneReport cellphoneInDatabase = cellphoneReportService.findById(dto.getCellphone());
-        CellphoneReport report;
-        
-        if(cellphoneInDatabase == null){
-            report = new CellphoneReport(dto.getCellphone(), 1, LocalDate.now());
-        } else{
-            report = new CellphoneReport(cellphoneInDatabase.getCellphone(), cellphoneInDatabase.getReportQuantity() + 1, LocalDate.now());
-        }
-
-        CellphoneReport saved = cellphoneReportService.insert(report);
+        CellphoneReport saved = cellphoneReportService.saveNewReport(dto.getCellphone());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getCellphone()).toUri();
@@ -61,24 +52,11 @@ public class CellphoneReportController {
 
     @DeleteMapping("/{cellphone}")
     public ResponseEntity<String> deleteReport(@PathVariable String cellphone){
-    CellphoneReport currentDatabaseReport = cellphoneReportService.findById(cellphone);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
-        cellphoneReportService.deleteById(cellphone);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        CellphoneReport newDatabaseReport = 
-        new CellphoneReport(
-            currentDatabaseReport.getCellphone(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        cellphoneReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        try {
+            cellphoneReportService.deleteReport(cellphone);
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

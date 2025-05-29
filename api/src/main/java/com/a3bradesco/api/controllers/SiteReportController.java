@@ -1,7 +1,6 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.a3bradesco.api.dto.SiteDTO;
 import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.services.SiteReportService;
+
+import jakarta.persistence.EntityNotFoundException;
 
 
 @RestController
@@ -41,17 +42,7 @@ public class SiteReportController {
 
     @PostMapping()
     public ResponseEntity<SiteReport> saveNewReport(@RequestBody SiteDTO dto) {
-
-        SiteReport siteInDatabase = siteReportService.findById(dto.getSite());
-        SiteReport report;
-        
-        if(siteInDatabase == null){
-            report = new SiteReport(dto.getSite(), 1, LocalDate.now());
-        } else{
-            report = new SiteReport(siteInDatabase.getSite(), siteInDatabase.getReportQuantity() + 1, LocalDate.now());
-        }
-
-        SiteReport saved = siteReportService.insert(report);
+        SiteReport saved = siteReportService.saveNewReport(dto.getSite());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getSite()).toUri();
@@ -61,24 +52,11 @@ public class SiteReportController {
 
     @DeleteMapping("/{site}")
     public ResponseEntity<String> deleteReport(@PathVariable String site){
-    SiteReport currentDatabaseReport = siteReportService.findById(site);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
-        siteReportService.deleteById(site);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        SiteReport newDatabaseReport = 
-        new SiteReport(
-            currentDatabaseReport.getSite(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        siteReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        try {
+            siteReportService.deleteReport(site);
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

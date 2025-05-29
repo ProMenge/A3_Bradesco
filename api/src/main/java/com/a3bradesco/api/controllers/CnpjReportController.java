@@ -1,7 +1,6 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.a3bradesco.api.dto.CnpjDTO;
 import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.services.CnpjReportService;
+
+import jakarta.persistence.EntityNotFoundException;
 
 
 @RestController
@@ -41,17 +42,7 @@ public class CnpjReportController {
 
     @PostMapping()
     public ResponseEntity<CnpjReport> saveNewReport(@RequestBody CnpjDTO dto) {
-
-        CnpjReport cnpjInDatabase = cnpjReportService.findById(dto.getCnpj());
-        CnpjReport report;
-        
-        if(cnpjInDatabase == null){
-            report = new CnpjReport(dto.getCnpj(), 1, LocalDate.now());
-        } else{
-            report = new CnpjReport(cnpjInDatabase.getCnpj(), cnpjInDatabase.getReportQuantity() + 1, LocalDate.now());
-        }
-
-        CnpjReport saved = cnpjReportService.insert(report);
+        CnpjReport saved = cnpjReportService.saveNewReport(dto.getCnpj());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getCnpj()).toUri();
@@ -61,24 +52,11 @@ public class CnpjReportController {
 
     @DeleteMapping("/{cnpj}")
     public ResponseEntity<String> deleteReport(@PathVariable String cnpj){
-    CnpjReport currentDatabaseReport = cnpjReportService.findById(cnpj);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
-        cnpjReportService.deleteById(cnpj);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        CnpjReport newDatabaseReport = 
-        new CnpjReport(
-            currentDatabaseReport.getCnpj(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        cnpjReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        try {
+            cnpjReportService.deleteReport(cnpj);
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

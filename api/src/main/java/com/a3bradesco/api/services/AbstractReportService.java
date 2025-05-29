@@ -27,6 +27,7 @@ public abstract class AbstractReportService<T extends AbstractReport> {
         getRepository().deleteById(id);
     }
 
-    protected abstract T createNewReport(String id);
+    protected abstract T saveNewReport(String id);
 
+    protected abstract void deleteReport(String id);
 }
