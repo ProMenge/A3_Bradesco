@@ -1,7 +1,6 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,37 +39,30 @@ public class UserReportController {
     }
 
     @PostMapping
-    public ResponseEntity<UserReport> saveNewReport(@PathVariable Long userId, @RequestBody UserReportDTO reportDTO) {
+    public ResponseEntity<?> saveNewReport(@PathVariable Long userId, @RequestBody UserReportDTO reportDTO) {
         //TODO: Atribuir report ao usuário logado
         //pega o usuário passado no dto (pelo id) no banco e atribui o report a ele
-        User user = userService.findById(userId);
-
-        UserReport report = new UserReport(
-            null,
-            user,
-            reportDTO.getReportType(),
-            reportDTO.getReportValue(), 
-            LocalDateTime.now()
-        );
-
-        UserReport saved = userReportService.insert(report);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                  .path("/{id}").buildAndExpand(saved.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(saved);
+        try {
+            UserReport saved = userReportService.saveNewReport(userId, reportDTO);
+            URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                      .path("/{id}").buildAndExpand(saved.getId()).toUri();
+    
+            return ResponseEntity.created(uri).body(saved);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{reportId}")
-    public ResponseEntity<String> deleteReport(@PathVariable Long reportId){
-        userReportService.deleteById(reportId);
-        UserReport isDeleted = userReportService.findById(reportId);
-        if(isDeleted == null){
+    public ResponseEntity<String> deleteReport(@PathVariable Long reportId) {
+        boolean deleted = userReportService.deleteReport(reportId);
+
+        if (deleted) {
             return ResponseEntity.ok("Denúncia retirada com sucesso!");
         } else {
             return ResponseEntity.badRequest().build();
         }
-        
     }
-    
 }

@@ -1,7 +1,6 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.a3bradesco.api.dto.CpfDTO;
 import com.a3bradesco.api.entities.CpfReport;
 import com.a3bradesco.api.services.CpfReportService;
+
+import jakarta.persistence.EntityNotFoundException;
 
 
 @RestController
@@ -41,17 +42,7 @@ public class CpfReportController {
 
     @PostMapping()
     public ResponseEntity<CpfReport> saveNewReport(@RequestBody CpfDTO dto) {
-
-        CpfReport cpfInDatabase = cpfReportService.findById(dto.getCpf());
-        CpfReport report;
-        
-        if(cpfInDatabase == null){
-            report = new CpfReport(dto.getCpf(), 1, LocalDate.now());
-        } else{
-            report = new CpfReport(cpfInDatabase.getCpf(), cpfInDatabase.getReportQuantity() + 1, LocalDate.now());
-        }
-
-        CpfReport saved = cpfReportService.insert(report);
+        CpfReport saved = cpfReportService.saveNewReport(dto.getCpf());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getCpf()).toUri();
@@ -61,24 +52,11 @@ public class CpfReportController {
 
     @DeleteMapping("/{cpf}")
     public ResponseEntity<String> deleteReport(@PathVariable String cpf){
-    CpfReport currentDatabaseReport = cpfReportService.findById(cpf);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
-        cpfReportService.deleteById(cpf);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        CpfReport newDatabaseReport = 
-        new CpfReport(
-            currentDatabaseReport.getCpf(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        cpfReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        try {
+            cpfReportService.deleteReport(cpf);
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }
