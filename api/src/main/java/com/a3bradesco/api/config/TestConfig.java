@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.entities.CnpjReport;
@@ -44,11 +45,14 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private SiteReportRepository siteReportRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 	@Override
 	public void run(String... args) throws Exception {
-		User user1 = new User(null, "Igor", "11111111111", "igor@gmail.com", "123");
-        User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com", "123");
-        User user3 = new User(null, "Caue", "33333333333", "caue@gmail.com", "123");
+		User user1 = new User(null, "Igor", "11111111111", "igor@gmail.com", passwordEncoder.encode("123"));
+        User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com", passwordEncoder.encode("123"));
+        User user3 = new User(null, "Caue", "33333333333", "caue@gmail.com", passwordEncoder.encode("123"));
 
         UserReport report1 = new UserReport(null, user1, ReportType.CPF, "12312312312", LocalDateTime.now());
         UserReport report2 = new UserReport(null, user1, ReportType.CNPJ, "92221230000107", LocalDateTime.now());
