@@ -61,14 +61,24 @@ public class EmailReportController {
 
     @DeleteMapping("/{email}")
     public ResponseEntity<String> deleteReport(@PathVariable String email){
-        emailReportService.deleteById(email);
-        EmailReport isDeleted = emailReportService.findById(email);
-        if(isDeleted == null){
-            return ResponseEntity.ok("Denúncia retirada com sucesso!");
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-        
+    EmailReport currentDatabaseReport = emailReportService.findById(email);
+
+    if(currentDatabaseReport == null) {
+        return ResponseEntity.notFound().build();
     }
-    
+    if(currentDatabaseReport.getReportQuantity() <= 1){
+        emailReportService.deleteById(email);
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+    } else {
+        EmailReport newDatabaseReport = 
+        new EmailReport(
+            currentDatabaseReport.getEmail(), 
+            currentDatabaseReport.getReportQuantity() - 1, 
+            currentDatabaseReport.getLastTimeReported());
+
+        emailReportService.insert(newDatabaseReport);
+
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        }
+    }
 }

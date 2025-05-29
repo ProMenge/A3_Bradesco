@@ -18,38 +18,32 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.a3bradesco.api.dto.UserReportDTO;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.UserReport;
-import com.a3bradesco.api.entities.enums.ReportType;
 import com.a3bradesco.api.services.UserReportService;
 import com.a3bradesco.api.services.UserService;
 
 
 @RestController
-@RequestMapping("/user-reports")
+@RequestMapping("/users/{userId}/user-reports")
 public class UserReportController {
     
     @Autowired
-    UserReportService reportService;
+    UserReportService userReportService;
 
     @Autowired
     UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserReport>> findAll() {
-        List<UserReport> reportList = reportService.findAll();
+    public ResponseEntity<List<UserReport>> findAll(@PathVariable Long userId) {
+        User user = userService.findById(userId);
+        List<UserReport> reportList = userReportService.findByReporter(user);
         return ResponseEntity.ok().body(reportList);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserReport> findById(@PathVariable Long id){
-        UserReport report = reportService.findById(id);
-        return ResponseEntity.ok().body(report);
-    }
-
-    @PostMapping()
-    public ResponseEntity<UserReport> saveNewReport(@RequestBody UserReportDTO reportDTO) {
+    @PostMapping
+    public ResponseEntity<UserReport> saveNewReport(@PathVariable Long userId, @RequestBody UserReportDTO reportDTO) {
         //TODO: Atribuir report ao usuário logado
         //pega o usuário passado no dto (pelo id) no banco e atribui o report a ele
-        User user = userService.findById(reportDTO.getReporterId());
+        User user = userService.findById(userId);
 
         UserReport report = new UserReport(
             null,
@@ -59,7 +53,7 @@ public class UserReportController {
             LocalDateTime.now()
         );
 
-        UserReport saved = reportService.insert(report);
+        UserReport saved = userReportService.insert(report);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getId()).toUri();
@@ -67,10 +61,10 @@ public class UserReportController {
         return ResponseEntity.created(uri).body(saved);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteReport(@PathVariable Long id){
-        reportService.deleteById(id);
-        User isDeleted = userService.findById(id);
+    @DeleteMapping("/{reportId}")
+    public ResponseEntity<String> deleteReport(@PathVariable Long reportId){
+        userReportService.deleteById(reportId);
+        UserReport isDeleted = userReportService.findById(reportId);
         if(isDeleted == null){
             return ResponseEntity.ok("Denúncia retirada com sucesso!");
         } else {
