@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.a3bradesco.api.dto.LoginDTO;
+import com.a3bradesco.api.dto.UserDTO;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.services.UserService;
 
@@ -38,15 +41,31 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> saveNewUser(@RequestBody User userObj) {
-        userObj = userService.insert(userObj);
+    public ResponseEntity<?> saveNewUser(@RequestBody UserDTO dto) {
+        try {
+            User userObj = userService.saveNewUser(dto);
 
-        //Devolve no header o location (url) onde pode-se encontrar o usuário criado através de get
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				  .buildAndExpand(userObj.getId()).toUri();
+            //Devolve no header o location (url) onde pode-se encontrar o usuário criado através de get
+            URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                    .buildAndExpand(userObj.getId()).toUri();
 
-		return ResponseEntity.created(uri).body(userObj);
+            return ResponseEntity.created(uri).body(userObj);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
+        try {
+            User user = userService.login(dto.getIdentifier(), dto.getPassword());
+            return ResponseEntity.ok(user);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id){
