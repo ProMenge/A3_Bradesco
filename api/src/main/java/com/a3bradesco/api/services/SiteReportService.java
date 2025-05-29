@@ -21,8 +21,19 @@ public class SiteReportService extends AbstractReportService<SiteReport>{
     }
 
     @Override
-    protected SiteReport createNewReport(String id){
-        return new SiteReport(id, 1, LocalDate.now());
+    public SiteReport saveNewReport(String site){
+        SiteReport siteInDatabase = findById(site);
+
+        if(siteInDatabase == null){
+            return insert(new SiteReport(site, 1, LocalDate.now()));
+        } else {
+            SiteReport newReport = new SiteReport(
+                siteInDatabase.getSite(),
+                siteInDatabase.getReportQuantity() + 1,
+                LocalDate.now()
+            );
+            return insert(newReport);
+        }
     }
 
 }

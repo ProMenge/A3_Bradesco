@@ -21,8 +21,19 @@ public class EmailReportService extends AbstractReportService<EmailReport>{
     }
 
     @Override
-    protected EmailReport createNewReport(String id){
-        return new EmailReport(id, 1, LocalDate.now());
+    public EmailReport saveNewReport(String email){
+        EmailReport emailInDatabase = findById(email);
+
+        if(emailInDatabase == null){
+            return insert(new EmailReport(email, 1, LocalDate.now()));
+        } else {
+            EmailReport newReport = new EmailReport(
+                emailInDatabase.getEmail(),
+                emailInDatabase.getReportQuantity() + 1,
+                LocalDate.now()
+            );
+            return insert(newReport);
+        }
     }
 
 }

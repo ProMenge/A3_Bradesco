@@ -21,8 +21,19 @@ public class CellphoneReportService extends AbstractReportService<CellphoneRepor
     }
 
     @Override
-    protected CellphoneReport createNewReport(String id){
-        return new CellphoneReport(id, 1, LocalDate.now());
+    public CellphoneReport saveNewReport(String cellphone){
+        CellphoneReport cellphoneInDatabase = findById(cellphone);
+
+        if(cellphoneInDatabase == null){
+            return insert(new CellphoneReport(cellphone, 1, LocalDate.now()));
+        } else {
+            CellphoneReport newReport = new CellphoneReport(
+                cellphoneInDatabase.getCellphone(),
+                cellphoneInDatabase.getReportQuantity() + 1,
+                LocalDate.now()
+            );
+            return insert(newReport);
+        }
     }
 
 }

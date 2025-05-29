@@ -1,7 +1,6 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +40,7 @@ public class CnpjReportController {
 
     @PostMapping()
     public ResponseEntity<CnpjReport> saveNewReport(@RequestBody CnpjDTO dto) {
-
-        CnpjReport cnpjInDatabase = cnpjReportService.findById(dto.getCnpj());
-        CnpjReport report;
-        
-        if(cnpjInDatabase == null){
-            report = new CnpjReport(dto.getCnpj(), 1, LocalDate.now());
-        } else{
-            report = new CnpjReport(cnpjInDatabase.getCnpj(), cnpjInDatabase.getReportQuantity() + 1, LocalDate.now());
-        }
-
-        CnpjReport saved = cnpjReportService.insert(report);
+        CnpjReport saved = cnpjReportService.saveNewReport(dto.getCnpj());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getCnpj()).toUri();

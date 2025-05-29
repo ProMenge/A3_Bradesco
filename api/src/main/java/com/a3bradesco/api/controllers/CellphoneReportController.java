@@ -1,7 +1,6 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +40,7 @@ public class CellphoneReportController {
 
     @PostMapping()
     public ResponseEntity<CellphoneReport> saveNewReport(@RequestBody CellphoneDTO dto) {
-
-        CellphoneReport cellphoneInDatabase = cellphoneReportService.findById(dto.getCellphone());
-        CellphoneReport report;
-        
-        if(cellphoneInDatabase == null){
-            report = new CellphoneReport(dto.getCellphone(), 1, LocalDate.now());
-        } else{
-            report = new CellphoneReport(cellphoneInDatabase.getCellphone(), cellphoneInDatabase.getReportQuantity() + 1, LocalDate.now());
-        }
-
-        CellphoneReport saved = cellphoneReportService.insert(report);
+        CellphoneReport saved = cellphoneReportService.saveNewReport(dto.getCellphone());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getCellphone()).toUri();

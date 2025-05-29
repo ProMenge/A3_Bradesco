@@ -21,8 +21,18 @@ public class CnpjReportService extends AbstractReportService<CnpjReport>{
     }
 
     @Override
-    protected CnpjReport createNewReport(String id){
-        return new CnpjReport(id, 1, LocalDate.now());
-    }
+    public CnpjReport saveNewReport(String cnpj){
+        CnpjReport cnpjInDatabase = findById(cnpj);
 
+        if(cnpjInDatabase == null){
+            return insert(new CnpjReport(cnpj, 1, LocalDate.now()));
+        } else {
+            CnpjReport newReport = new CnpjReport(
+                cnpjInDatabase.getCnpj(),
+                cnpjInDatabase.getReportQuantity() + 1,
+                LocalDate.now()
+            );
+            return insert(newReport);
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +40,7 @@ public class EmailReportController {
 
     @PostMapping()
     public ResponseEntity<EmailReport> saveNewReport(@RequestBody EmailDTO dto) {
-
-        EmailReport emailInDatabase = emailReportService.findById(dto.getEmail());
-        EmailReport report;
-        
-        if(emailInDatabase == null){
-            report = new EmailReport(dto.getEmail(), 1, LocalDate.now());
-        } else{
-            report = new EmailReport(emailInDatabase.getEmail(), emailInDatabase.getReportQuantity() + 1, LocalDate.now());
-        }
-
-        EmailReport saved = emailReportService.insert(report);
+        EmailReport saved = emailReportService.saveNewReport(dto.getEmail());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getEmail()).toUri();

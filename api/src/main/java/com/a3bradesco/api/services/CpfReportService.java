@@ -21,8 +21,18 @@ public class CpfReportService extends AbstractReportService<CpfReport>{
     }
 
     @Override
-    protected CpfReport createNewReport(String id){
-        return new CpfReport(id, 1, LocalDate.now());
-    }
+    public CpfReport saveNewReport(String cpf){
+        CpfReport cpfInDatabase = findById(cpf);
 
+        if(cpfInDatabase == null){
+            return insert(new CpfReport(cpf, 1, LocalDate.now()));
+        } else {
+            CpfReport newReport = new CpfReport(
+                cpfInDatabase.getCpf(),
+                cpfInDatabase.getReportQuantity() + 1,
+                LocalDate.now()
+            );
+            return insert(newReport);
+        }
+    }
 }

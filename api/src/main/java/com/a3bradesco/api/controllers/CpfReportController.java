@@ -1,7 +1,6 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +40,7 @@ public class CpfReportController {
 
     @PostMapping()
     public ResponseEntity<CpfReport> saveNewReport(@RequestBody CpfDTO dto) {
-
-        CpfReport cpfInDatabase = cpfReportService.findById(dto.getCpf());
-        CpfReport report;
-        
-        if(cpfInDatabase == null){
-            report = new CpfReport(dto.getCpf(), 1, LocalDate.now());
-        } else{
-            report = new CpfReport(cpfInDatabase.getCpf(), cpfInDatabase.getReportQuantity() + 1, LocalDate.now());
-        }
-
-        CpfReport saved = cpfReportService.insert(report);
+        CpfReport saved = cpfReportService.saveNewReport(dto.getCpf());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                   .path("/{id}").buildAndExpand(saved.getCpf()).toUri();
