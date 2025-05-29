@@ -61,24 +61,14 @@ public class CellphoneReportController {
 
     @DeleteMapping("/{cellphone}")
     public ResponseEntity<String> deleteReport(@PathVariable String cellphone){
-    CellphoneReport currentDatabaseReport = cellphoneReportService.findById(cellphone);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
         cellphoneReportService.deleteById(cellphone);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        CellphoneReport newDatabaseReport = 
-        new CellphoneReport(
-            currentDatabaseReport.getCellphone(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        cellphoneReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        CellphoneReport isDeleted = cellphoneReportService.findById(cellphone);
+        if(isDeleted == null){
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } else {
+            return ResponseEntity.badRequest().build();
         }
+        
     }
+    
 }

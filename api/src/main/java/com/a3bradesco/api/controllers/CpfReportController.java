@@ -61,24 +61,14 @@ public class CpfReportController {
 
     @DeleteMapping("/{cpf}")
     public ResponseEntity<String> deleteReport(@PathVariable String cpf){
-    CpfReport currentDatabaseReport = cpfReportService.findById(cpf);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
         cpfReportService.deleteById(cpf);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        CpfReport newDatabaseReport = 
-        new CpfReport(
-            currentDatabaseReport.getCpf(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        cpfReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        CpfReport isDeleted = cpfReportService.findById(cpf);
+        if(isDeleted == null){
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } else {
+            return ResponseEntity.badRequest().build();
         }
+        
     }
+    
 }
