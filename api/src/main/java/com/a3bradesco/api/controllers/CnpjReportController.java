@@ -18,6 +18,8 @@ import com.a3bradesco.api.dto.CnpjDTO;
 import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.services.CnpjReportService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 
 @RestController
 @RequestMapping("/cnpj-reports")
@@ -50,24 +52,11 @@ public class CnpjReportController {
 
     @DeleteMapping("/{cnpj}")
     public ResponseEntity<String> deleteReport(@PathVariable String cnpj){
-    CnpjReport currentDatabaseReport = cnpjReportService.findById(cnpj);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
-        cnpjReportService.deleteById(cnpj);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        CnpjReport newDatabaseReport = 
-        new CnpjReport(
-            currentDatabaseReport.getCnpj(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        cnpjReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        try {
+            cnpjReportService.deleteReport(cnpj);
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

@@ -18,6 +18,8 @@ import com.a3bradesco.api.dto.CpfDTO;
 import com.a3bradesco.api.entities.CpfReport;
 import com.a3bradesco.api.services.CpfReportService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 
 @RestController
 @RequestMapping("/cpf-reports")
@@ -50,24 +52,11 @@ public class CpfReportController {
 
     @DeleteMapping("/{cpf}")
     public ResponseEntity<String> deleteReport(@PathVariable String cpf){
-    CpfReport currentDatabaseReport = cpfReportService.findById(cpf);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
-        cpfReportService.deleteById(cpf);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        CpfReport newDatabaseReport = 
-        new CpfReport(
-            currentDatabaseReport.getCpf(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        cpfReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        try {
+            cpfReportService.deleteReport(cpf);
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

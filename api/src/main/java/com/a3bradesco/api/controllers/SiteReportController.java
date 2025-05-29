@@ -18,6 +18,8 @@ import com.a3bradesco.api.dto.SiteDTO;
 import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.services.SiteReportService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 
 @RestController
 @RequestMapping("/site-reports")
@@ -50,24 +52,11 @@ public class SiteReportController {
 
     @DeleteMapping("/{site}")
     public ResponseEntity<String> deleteReport(@PathVariable String site){
-    SiteReport currentDatabaseReport = siteReportService.findById(site);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
-        siteReportService.deleteById(site);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        SiteReport newDatabaseReport = 
-        new SiteReport(
-            currentDatabaseReport.getSite(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        siteReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        try {
+            siteReportService.deleteReport(site);
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

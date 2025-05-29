@@ -29,4 +29,5 @@ public abstract class AbstractReportService<T extends AbstractReport> {
 
     protected abstract T saveNewReport(String id);
 
+    protected abstract void deleteReport(String id);
 }

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.a3bradesco.api.entities.EmailReport;
 import com.a3bradesco.api.repositories.EmailReportRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class EmailReportService extends AbstractReportService<EmailReport>{
     
@@ -36,4 +38,22 @@ public class EmailReportService extends AbstractReportService<EmailReport>{
         }
     }
 
+    @Override
+    public void deleteReport(String email) {
+        EmailReport emailInDatabase = findById(email);
+
+        if (emailInDatabase == null) {
+            throw new EntityNotFoundException("Celular não encontrado");
+        }
+        if(emailInDatabase.getReportQuantity() <= 1){
+            deleteById(email);
+        } else {
+            EmailReport updatedReport = new EmailReport(
+                emailInDatabase.getEmail(),
+                emailInDatabase.getReportQuantity() -1,
+                emailInDatabase.getLastTimeReported()
+            );
+            insert(updatedReport);
+        }
+    }
 }

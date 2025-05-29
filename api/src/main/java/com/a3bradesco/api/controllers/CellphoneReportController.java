@@ -18,6 +18,8 @@ import com.a3bradesco.api.dto.CellphoneDTO;
 import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.services.CellphoneReportService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 
 @RestController
 @RequestMapping("/cellphone-reports")
@@ -50,24 +52,11 @@ public class CellphoneReportController {
 
     @DeleteMapping("/{cellphone}")
     public ResponseEntity<String> deleteReport(@PathVariable String cellphone){
-    CellphoneReport currentDatabaseReport = cellphoneReportService.findById(cellphone);
-
-    if(currentDatabaseReport == null) {
-        return ResponseEntity.notFound().build();
-    }
-    if(currentDatabaseReport.getReportQuantity() <= 1){
-        cellphoneReportService.deleteById(cellphone);
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
-    } else {
-        CellphoneReport newDatabaseReport = 
-        new CellphoneReport(
-            currentDatabaseReport.getCellphone(), 
-            currentDatabaseReport.getReportQuantity() - 1, 
-            currentDatabaseReport.getLastTimeReported());
-
-        cellphoneReportService.insert(newDatabaseReport);
-
-        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        try {
+            cellphoneReportService.deleteReport(cellphone);
+            return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

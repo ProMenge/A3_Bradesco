@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.repositories.SiteReportRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class SiteReportService extends AbstractReportService<SiteReport>{
     
@@ -36,4 +38,22 @@ public class SiteReportService extends AbstractReportService<SiteReport>{
         }
     }
 
+    @Override
+    public void deleteReport(String site) {
+        SiteReport siteInDatabase = findById(site);
+
+        if (siteInDatabase == null) {
+            throw new EntityNotFoundException("Celular não encontrado");
+        }
+        if(siteInDatabase.getReportQuantity() <= 1){
+            deleteById(site);
+        } else {
+            SiteReport updatedReport = new SiteReport(
+                siteInDatabase.getSite(),
+                siteInDatabase.getReportQuantity() -1,
+                siteInDatabase.getLastTimeReported()
+            );
+            insert(updatedReport);
+        }
+    }
 }
