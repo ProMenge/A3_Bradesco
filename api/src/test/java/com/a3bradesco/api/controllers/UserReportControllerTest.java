@@ -16,12 +16,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @WebMvcTest(UserReportController.class)
@@ -41,7 +41,7 @@ class UserReportControllerTest {
 
     @Test
     void ReturnListOfUserReports() throws Exception {
-        UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312");
+        UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312", LocalDateTime.now());
         when(reportService.findAll()).thenReturn(Arrays.asList(report));
 
         mockMvc.perform(get("/user-reports"))
@@ -50,7 +50,7 @@ class UserReportControllerTest {
 
     @Test
     void ReturnReportById() throws Exception {
-        UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312");
+        UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312", LocalDateTime.now());
         when(reportService.findById(1L)).thenReturn(report);
 
         mockMvc.perform(get("/user-reports/1"))
@@ -59,19 +59,18 @@ class UserReportControllerTest {
 
     @Test
     void CreateNewReport() throws Exception {
-        
+
         User user = new User(1L, "Igor", "11111111111", "igor@gmail.com", "123");
         UserReportDTO dto = new UserReportDTO();
         dto.setReporterId(user.getId());
-        dto.setReportType(ReportType.CPF.ordinal());
+        dto.setReportType(ReportType.CPF); // corrigido
         dto.setReportValue("12312312312");
 
-        UserReport report = new UserReport(1L, user, ReportType.CPF, "12312312312");
+        UserReport report = new UserReport(1L, user, ReportType.CPF, "12312312312", LocalDateTime.now());
 
         when(userService.findById(user.getId())).thenReturn(user);
         when(reportService.insert(any(UserReport.class))).thenReturn(report);
 
-        
         mockMvc.perform(post("/user-reports")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
