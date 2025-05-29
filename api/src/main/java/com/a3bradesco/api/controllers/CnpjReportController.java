@@ -61,14 +61,24 @@ public class CnpjReportController {
 
     @DeleteMapping("/{cnpj}")
     public ResponseEntity<String> deleteReport(@PathVariable String cnpj){
-        cnpjReportService.deleteById(cnpj);
-        CnpjReport isDeleted = cnpjReportService.findById(cnpj);
-        if(isDeleted == null){
-            return ResponseEntity.ok("Denúncia retirada com sucesso!");
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-        
+    CnpjReport currentDatabaseReport = cnpjReportService.findById(cnpj);
+
+    if(currentDatabaseReport == null) {
+        return ResponseEntity.notFound().build();
     }
-    
+    if(currentDatabaseReport.getReportQuantity() <= 1){
+        cnpjReportService.deleteById(cnpj);
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+    } else {
+        CnpjReport newDatabaseReport = 
+        new CnpjReport(
+            currentDatabaseReport.getCnpj(), 
+            currentDatabaseReport.getReportQuantity() - 1, 
+            currentDatabaseReport.getLastTimeReported());
+
+        cnpjReportService.insert(newDatabaseReport);
+
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
+        }
+    }
 }
