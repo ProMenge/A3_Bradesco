@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> post(@RequestBody User userObj) {
+    public ResponseEntity<User> saveNewUser(@RequestBody User userObj) {
         userObj = userService.insert(userObj);
 
         //Devolve no header o location (url) onde pode-se encontrar o usuário criado através de get
@@ -50,9 +50,8 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id){
-        userService.deleteById(id);
-        User isDeleted = userService.findById(id);
-        if(isDeleted == null){
+        boolean deleted = userService.deleteUser(id);
+        if(deleted){
             return ResponseEntity.ok("Usuário deletado com sucesso!");
         } else {
             return ResponseEntity.badRequest().build();
