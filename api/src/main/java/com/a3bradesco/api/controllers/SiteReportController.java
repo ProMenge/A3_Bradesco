@@ -18,8 +18,6 @@ import com.a3bradesco.api.dto.SiteDTO;
 import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.services.SiteReportService;
 
-import jakarta.persistence.EntityNotFoundException;
-
 
 @RestController
 @RequestMapping("/site-reports")
@@ -52,11 +50,7 @@ public class SiteReportController {
 
     @DeleteMapping("/{site}")
     public ResponseEntity<String> deleteReport(@PathVariable String site){
-        try {
-            siteReportService.deleteReport(site);
-            return ResponseEntity.ok("Denúncia retirada com sucesso!");
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        siteReportService.deleteReport(site);
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
     }
 }

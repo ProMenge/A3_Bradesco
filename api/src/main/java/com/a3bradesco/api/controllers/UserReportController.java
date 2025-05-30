@@ -57,12 +57,7 @@ public class UserReportController {
 
     @DeleteMapping("/{reportId}")
     public ResponseEntity<String> deleteReport(@PathVariable Long reportId) {
-        boolean deleted = userReportService.deleteReport(reportId);
-
-        if (deleted) {
-            return ResponseEntity.ok("Denúncia retirada com sucesso!");
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        userReportService.deleteReport(reportId);
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
     }
 }

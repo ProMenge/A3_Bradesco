@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.a3bradesco.api.entities.AbstractReport;
 
+import jakarta.persistence.EntityNotFoundException;
+
 public abstract class AbstractReportService<T extends AbstractReport> {
     protected abstract JpaRepository<T, String> getRepository();
 
@@ -15,8 +17,12 @@ public abstract class AbstractReportService<T extends AbstractReport> {
     }
 
     public T findById(String id) {
-        Optional<T> reportObject = getRepository().findById(id);
-        return reportObject.orElse(null);
+        return getRepository().findById(id).orElseThrow(() -> 
+            new EntityNotFoundException(id));
+    }
+
+    public Optional<T> findByIdOptional(String id) {
+        return getRepository().findById(id);
     }
 
     public T insert(T report){

@@ -18,8 +18,6 @@ import com.a3bradesco.api.dto.EmailDTO;
 import com.a3bradesco.api.entities.EmailReport;
 import com.a3bradesco.api.services.EmailReportService;
 
-import jakarta.persistence.EntityNotFoundException;
-
 
 @RestController
 @RequestMapping("/email-reports")
@@ -52,11 +50,7 @@ public class EmailReportController {
 
     @DeleteMapping("/{email}")
     public ResponseEntity<String> deleteReport(@PathVariable String email){
-        try {
-            emailReportService.deleteReport(email);
-            return ResponseEntity.ok("Denúncia retirada com sucesso!");
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        emailReportService.deleteReport(email);
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
     }
 }

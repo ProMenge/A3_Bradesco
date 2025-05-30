@@ -11,6 +11,8 @@ import com.a3bradesco.api.dto.UserDTO;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.repositories.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserService {
     
@@ -26,7 +28,8 @@ public class UserService {
 
     public User findById(Long id) {
         Optional<User> userObject = userRepository.findById(id);
-        return userObject.orElse(null);
+        return userObject.orElseThrow(() -> 
+                new EntityNotFoundException(String.valueOf(id)));
     }
 
     public User insert(User user){
@@ -34,8 +37,8 @@ public class UserService {
     }
 
     public User saveNewUser(UserDTO dto){
-        if (userRepository.findByCpf(dto.getCpf()) == null
-            && userRepository.findByEmail(dto.getEmail()) == null) {
+        if (userRepository.findByCpf(dto.getCpf()) == null &&
+            userRepository.findByEmail(dto.getEmail()) == null) {
             User user = new User();
             user.setName(dto.getName());
             user.setEmail(dto.getEmail());
@@ -73,8 +76,8 @@ public class UserService {
         userRepository.deleteById(id);
     } 
 
-    public boolean deleteUser(Long id) {
+    public void deleteUser(Long id) {
+        findById(id);
         deleteById(id);
-        return findById(id) == null;
     }
 }

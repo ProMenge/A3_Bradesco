@@ -12,6 +12,8 @@ import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.repositories.UserReportRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserReportService {
     
@@ -31,7 +33,8 @@ public class UserReportService {
 
     public UserReport findById(Long id) {
         Optional<UserReport> reportObject = userReportRepository.findById(id);
-        return reportObject.orElse(null);
+        return reportObject.orElseThrow(() -> 
+                new EntityNotFoundException(String.valueOf(id)));
     }
 
     public UserReport insert(UserReport report){
@@ -72,8 +75,8 @@ public class UserReportService {
         return insert(report);
     }
 
-    public boolean deleteReport(Long reportId) {
+    public void deleteReport(Long reportId) {
+        findById(reportId);
         deleteById(reportId);
-        return findById(reportId) == null;
     }
 }
