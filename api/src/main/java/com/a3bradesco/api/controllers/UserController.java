@@ -20,6 +20,8 @@ import com.a3bradesco.api.dto.UserDTO;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.services.UserService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/users")
@@ -41,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> saveNewUser(@RequestBody UserDTO dto) {
+    public ResponseEntity<?> saveNewUser(@RequestBody @Valid UserDTO dto) {
         try {
             User userObj = userService.saveNewUser(dto);
 
@@ -57,7 +59,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginDTO dto) {
         try {
             User user = userService.login(dto.getIdentifier(), dto.getPassword());
             return ResponseEntity.ok(user);

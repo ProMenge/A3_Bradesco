@@ -18,6 +18,8 @@ import com.a3bradesco.api.dto.CellphoneDTO;
 import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.services.CellphoneReportService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/cellphone-reports")
@@ -39,7 +41,7 @@ public class CellphoneReportController {
     }
 
     @PostMapping()
-    public ResponseEntity<CellphoneReport> saveNewReport(@RequestBody CellphoneDTO dto) {
+    public ResponseEntity<CellphoneReport> saveNewReport(@RequestBody @Valid CellphoneDTO dto) {
         CellphoneReport saved = cellphoneReportService.saveNewReport(dto.getCellphone());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()

@@ -18,6 +18,8 @@ import com.a3bradesco.api.dto.SiteDTO;
 import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.services.SiteReportService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/site-reports")
@@ -39,7 +41,7 @@ public class SiteReportController {
     }
 
     @PostMapping()
-    public ResponseEntity<SiteReport> saveNewReport(@RequestBody SiteDTO dto) {
+    public ResponseEntity<SiteReport> saveNewReport(@RequestBody @Valid SiteDTO dto) {
         SiteReport saved = siteReportService.saveNewReport(dto.getSite());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()

@@ -50,6 +50,26 @@ public class UserReportService {
 
         List<UserReport> existingReports = userReportRepository.findByReporter(user);
 
+        boolean isDtoValid = false;
+        
+        switch (reportDTO.getReportType()) {
+            case CELLPHONE:
+                    isDtoValid = reportDTO.getReportValue().matches("\\d{10,11}");
+                break;
+            case CNPJ:
+                    isDtoValid = reportDTO.getReportValue().matches("\\d{14}");
+                break;
+            case CPF:
+                    isDtoValid = reportDTO.getReportValue().matches("\\d{11}");
+                break;
+            case EMAIL:
+                    isDtoValid = reportDTO.getReportValue().matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-z]{2,3}");
+                break;
+            case SITE:
+                    isDtoValid = reportDTO.getReportValue().matches("^(https?:\\/\\/)?(www\\.)?[a-zA-Z0-9\\-]+\\.[a-z]{2,}(\\.[a-z]{2,})?(\\/.*)?$");
+                break;
+        }
+
         //Checa se o usuário já tem uma denúncia vinculada a este tipo com este valor
         boolean reportAlreadyInDatabase = existingReports.stream().anyMatch(report ->
         report.getReportType().equals(reportDTO.getReportType()) &&
@@ -62,6 +82,10 @@ public class UserReportService {
 
         if (existingReports.size() >= 20) {
             throw new IllegalStateException("O usuário já possui o número máximo de 20 denúncias.");
+        }
+
+        if(isDtoValid == false){
+            throw new IllegalArgumentException("O valor enviado é incompatível com o tipo de denúncia.");
         }
 
         UserReport report = new UserReport(

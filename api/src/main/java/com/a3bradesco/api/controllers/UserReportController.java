@@ -20,6 +20,8 @@ import com.a3bradesco.api.entities.UserReport;
 import com.a3bradesco.api.services.UserReportService;
 import com.a3bradesco.api.services.UserService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/users/{userId}/user-reports")
@@ -39,7 +41,8 @@ public class UserReportController {
     }
 
     @PostMapping
-    public ResponseEntity<?> saveNewReport(@PathVariable Long userId, @RequestBody UserReportDTO reportDTO) {
+    public ResponseEntity<?> saveNewReport(@PathVariable Long userId, 
+    @RequestBody @Valid UserReportDTO reportDTO) {
         //TODO: Atribuir report ao usuário logado
         //pega o usuário passado no dto (pelo id) no banco e atribui o report a ele
         try {
