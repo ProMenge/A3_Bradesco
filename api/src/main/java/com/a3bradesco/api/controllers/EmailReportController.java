@@ -18,6 +18,8 @@ import com.a3bradesco.api.dto.EmailDTO;
 import com.a3bradesco.api.entities.EmailReport;
 import com.a3bradesco.api.services.EmailReportService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/email-reports")
@@ -39,7 +41,7 @@ public class EmailReportController {
     }
 
     @PostMapping()
-    public ResponseEntity<EmailReport> saveNewReport(@RequestBody EmailDTO dto) {
+    public ResponseEntity<EmailReport> saveNewReport(@RequestBody @Valid EmailDTO dto) {
         EmailReport saved = emailReportService.saveNewReport(dto.getEmail());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()

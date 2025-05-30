@@ -18,6 +18,8 @@ import com.a3bradesco.api.dto.CpfDTO;
 import com.a3bradesco.api.entities.CpfReport;
 import com.a3bradesco.api.services.CpfReportService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/cpf-reports")
@@ -39,7 +41,7 @@ public class CpfReportController {
     }
 
     @PostMapping()
-    public ResponseEntity<CpfReport> saveNewReport(@RequestBody CpfDTO dto) {
+    public ResponseEntity<CpfReport> saveNewReport(@RequestBody @Valid CpfDTO dto) {
         CpfReport saved = cpfReportService.saveNewReport(dto.getCpf());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()

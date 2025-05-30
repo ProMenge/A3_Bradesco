@@ -18,6 +18,8 @@ import com.a3bradesco.api.dto.CnpjDTO;
 import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.services.CnpjReportService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/cnpj-reports")
@@ -39,7 +41,7 @@ public class CnpjReportController {
     }
 
     @PostMapping()
-    public ResponseEntity<CnpjReport> saveNewReport(@RequestBody CnpjDTO dto) {
+    public ResponseEntity<CnpjReport> saveNewReport(@RequestBody @Valid CnpjDTO dto) {
         CnpjReport saved = cnpjReportService.saveNewReport(dto.getCnpj());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
