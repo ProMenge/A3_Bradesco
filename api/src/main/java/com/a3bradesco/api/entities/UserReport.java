@@ -1,10 +1,14 @@
 package com.a3bradesco.api.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import com.a3bradesco.api.entities.enums.ReportType;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,19 +27,25 @@ public class UserReport implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    User reporter;
-    private int reportType;
-    String reportValue;
+    private User reporter;
+
+    @Enumerated(EnumType.STRING)
+    private ReportType reportType;
+    
+    private String reportValue;
+    private LocalDateTime reportMoment;
+    
 
     public UserReport(){}
     
-    public UserReport(Long id, User reporter, ReportType type, String reportValue) {
+    public UserReport(Long id, User reporter, ReportType type, String reportValue, LocalDateTime reportMoment) {
         this.id = id;
         this.reporter = reporter;
-        setReportType(type);
+        this.reportType = type;
         this.reportValue = reportValue;
-    }
-    
+        this.reportMoment = reportMoment;
+    }    
+
     public Long getId() {
         return id;
     }
@@ -48,21 +58,21 @@ public class UserReport implements Serializable {
     public void setReporter(User reporter) {
         this.reporter = reporter;
     }
-    
-    public ReportType getReportType(){
-        return ReportType.valueOf(reportType);
+    public LocalDateTime getReportMoment() {
+        return reportMoment.truncatedTo(ChronoUnit.SECONDS);
     }
-
-    public void setReportType(ReportType reportType){
-        if(reportType != null){
-            this.reportType = reportType.getCode();
-        }
+    public void setReportMoment(LocalDateTime reportMoment) {
+        this.reportMoment = reportMoment;
     }
-    
+    public ReportType getReportType() {
+        return reportType;
+    }
+    public void setReportType(ReportType reportType) {
+        this.reportType = reportType;
+    }
     public String getReportValue() {
         return reportValue;
     }
-
     public void setReportValue(String reportValue) {
         this.reportValue = reportValue;
     }
@@ -71,7 +81,9 @@ public class UserReport implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((reporter == null) ? 0 : reporter.hashCode());
+        result = prime * result + ((reportType == null) ? 0 : reportType.hashCode());
+        result = prime * result + ((reportValue == null) ? 0 : reportValue.hashCode());
         return result;
     }
 
@@ -84,10 +96,17 @@ public class UserReport implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         UserReport other = (UserReport) obj;
-        if (id == null) {
-            if (other.id != null)
+        if (reporter == null) {
+            if (other.reporter != null)
                 return false;
-        } else if (!id.equals(other.id))
+        } else if (!reporter.equals(other.reporter))
+            return false;
+        if (reportType != other.reportType)
+            return false;
+        if (reportValue == null) {
+            if (other.reportValue != null)
+                return false;
+        } else if (!reportValue.equals(other.reportValue))
             return false;
         return true;
     }

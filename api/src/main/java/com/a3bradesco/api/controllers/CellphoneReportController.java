@@ -1,12 +1,10 @@
 package com.a3bradesco.api.controllers;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,11 +18,13 @@ import com.a3bradesco.api.dto.CellphoneDTO;
 import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.services.CellphoneReportService;
 
+import jakarta.validation.Valid;
+
+
 @RestController
 @RequestMapping("/cellphone-reports")
-@CrossOrigin(origins = "http://localhost:5173")
 public class CellphoneReportController {
-
+    
     @Autowired
     CellphoneReportService cellphoneReportService;
 
@@ -35,42 +35,24 @@ public class CellphoneReportController {
     }
 
     @GetMapping("/{cellphone}")
-    public ResponseEntity<CellphoneReport> findById(@PathVariable String cellphone) {
+    public ResponseEntity<CellphoneReport> findById(@PathVariable String cellphone){
         CellphoneReport report = cellphoneReportService.findById(cellphone);
         return ResponseEntity.ok().body(report);
     }
 
     @PostMapping()
-    public ResponseEntity<CellphoneReport> saveNewReport(@RequestBody CellphoneDTO dto) {
-
-        CellphoneReport cellphoneInDatabase = cellphoneReportService.findById(dto.getCellphone());
-        CellphoneReport report;
-
-        if (cellphoneInDatabase == null) {
-            report = new CellphoneReport(dto.getCellphone(), 1, LocalDate.now());
-        } else {
-            report = new CellphoneReport(cellphoneInDatabase.getCellphone(),
-                    cellphoneInDatabase.getReportQuantity() + 1, LocalDate.now());
-        }
-
-        CellphoneReport saved = cellphoneReportService.insert(report);
+    public ResponseEntity<CellphoneReport> saveNewReport(@RequestBody @Valid CellphoneDTO dto) {
+        CellphoneReport saved = cellphoneReportService.saveNewReport(dto.getCellphone());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}").buildAndExpand(saved.getCellphone()).toUri();
+                  .path("/{id}").buildAndExpand(saved.getCellphone()).toUri();
 
         return ResponseEntity.created(uri).body(saved);
     }
 
     @DeleteMapping("/{cellphone}")
-    public ResponseEntity<String> deleteReport(@PathVariable String cellphone) {
-        cellphoneReportService.deleteById(cellphone);
-        CellphoneReport isDeleted = cellphoneReportService.findById(cellphone);
-        if (isDeleted == null) {
-            return ResponseEntity.ok("Denúncia retirada com sucesso!");
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-
+    public ResponseEntity<String> deleteReport(@PathVariable String cellphone){
+        cellphoneReportService.deleteReport(cellphone);
+        return ResponseEntity.ok("Denúncia retirada com sucesso!");
     }
-
 }

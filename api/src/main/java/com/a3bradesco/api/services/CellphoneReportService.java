@@ -1,6 +1,7 @@
 package com.a3bradesco.api.services;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,8 +22,34 @@ public class CellphoneReportService extends AbstractReportService<CellphoneRepor
     }
 
     @Override
-    protected CellphoneReport createNewReport(String id){
-        return new CellphoneReport(id, 1, LocalDate.now());
+    public CellphoneReport saveNewReport(String cellphone){
+        Optional<CellphoneReport> cellphoneInDatabase = findByIdOptional(cellphone);
+
+        if(cellphoneInDatabase.isEmpty()){
+            return insert(new CellphoneReport(cellphone, 1, LocalDate.now()));
+        } else {
+            CellphoneReport newReport = new CellphoneReport(
+                cellphoneInDatabase.get().getCellphone(),
+                cellphoneInDatabase.get().getReportQuantity() + 1,
+                LocalDate.now()
+            );
+            return insert(newReport);
+        }
     }
 
+    @Override
+    public void deleteReport(String cellphone) {
+        CellphoneReport cellphoneInDatabase = findById(cellphone);
+
+        if(cellphoneInDatabase.getReportQuantity() <= 1){
+            deleteById(cellphone);
+        } else {
+            CellphoneReport updatedReport = new CellphoneReport(
+                cellphoneInDatabase.getCellphone(),
+                cellphoneInDatabase.getReportQuantity() -1,
+                cellphoneInDatabase.getLastTimeReported()
+            );
+            insert(updatedReport);
+        }
+    }
 }

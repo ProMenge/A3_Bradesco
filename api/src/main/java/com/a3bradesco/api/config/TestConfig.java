@@ -1,12 +1,14 @@
 package com.a3bradesco.api.config;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.entities.CnpjReport;
@@ -29,7 +31,7 @@ import com.a3bradesco.api.repositories.UserRepository;
 public class TestConfig implements CommandLineRunner {
 
     @Autowired
-    private UserRepository userRepository;
+	private UserRepository userRepository;
     @Autowired
     private UserReportRepository reportRepository;
     @Autowired
@@ -43,17 +45,20 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private SiteReportRepository siteReportRepository;
 
-    @Override
-    public void run(String... args) throws Exception {
-        User user1 = new User(null, "Igor", "11111111111", "igor@gmail.com", "123");
-        User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com", "123");
-        User user3 = new User(null, "Caue", "33333333333", "caue@gmail.com", "123");
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-        UserReport report1 = new UserReport(null, user1, ReportType.CPF, "12312312312");
-        UserReport report2 = new UserReport(null, user1, ReportType.CNPJ, "92221230000107");
-        UserReport report3 = new UserReport(null, user2, ReportType.EMAIL, "mockemail@gmail.com");
-        UserReport report4 = new UserReport(null, user2, ReportType.SITE, "mocksite.com.br");
-        UserReport report5 = new UserReport(null, user3, ReportType.CELLPHONE, "11988887777");
+	@Override
+	public void run(String... args) throws Exception {
+		User user1 = new User(null, "Igor", "11111111111", "igor@gmail.com", passwordEncoder.encode("123"));
+        User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com", passwordEncoder.encode("123"));
+        User user3 = new User(null, "Caue", "33333333333", "caue@gmail.com", passwordEncoder.encode("123"));
+
+        UserReport report1 = new UserReport(null, user1, ReportType.CPF, "12312312312", LocalDateTime.now());
+        UserReport report2 = new UserReport(null, user1, ReportType.CNPJ, "92221230000107", LocalDateTime.now());
+        UserReport report3 = new UserReport(null, user2, ReportType.EMAIL, "mockemail@gmail.com", LocalDateTime.now());
+        UserReport report4 = new UserReport(null, user2, ReportType.SITE, "mocksite.com.br", LocalDateTime.now());
+        UserReport report5 = new UserReport(null, user3, ReportType.CELLPHONE, "11988887777", LocalDateTime.now());
 
         CpfReport cpfReport1 = new CpfReport("12312312312", 2, LocalDate.now());
         CpfReport cpfReport2 = new CpfReport("12312312311", 1, LocalDate.now());
@@ -74,8 +79,8 @@ public class TestConfig implements CommandLineRunner {
         emailReportRepository.saveAll(Arrays.asList(emailReport1, emailReport2));
         cellphoneReportRepository.saveAll(Arrays.asList(cellphoneReport1, cellphoneReport2));
         cnpjReportRepository.saveAll(Arrays.asList(cnpjReport1, cnpjReport2));
-        userRepository.saveAll(Arrays.asList(user1, user2, user3));
+		userRepository.saveAll(Arrays.asList(user1, user2, user3));
         reportRepository.saveAll(Arrays.asList(report1, report2, report3, report4, report5));
         cpfReportRepository.saveAll(Arrays.asList(cpfReport1, cpfReport2));
-    }
+	}
 }

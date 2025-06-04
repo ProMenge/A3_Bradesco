@@ -1,27 +1,16 @@
 package com.a3bradesco.api.dto;
 
+import com.a3bradesco.api.entities.enums.ReportType;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class UserReportDTO {
 
-    private Long reporterId;
-    private int reportTypeCode;
+    @NotNull
+    private ReportType reportType;
+    @NotBlank
     String reportValue;
-
-    // Getters e Setters
-    public Long getReporterId() {
-        return reporterId;
-    }
-
-    public void setReporterId(Long reporterId) {
-        this.reporterId = reporterId;
-    }
-
-    public int getReportType() {
-        return reportTypeCode;
-    }
-
-    public void setReportType(int reportTypeCode) {
-        this.reportTypeCode = reportTypeCode;
-    }
 
     public String getReportValue() {
         return reportValue;
@@ -29,6 +18,14 @@ public class UserReportDTO {
 
     public void setReportValue(String reportValue) {
         this.reportValue = reportValue;
+    }
+
+    public ReportType getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(ReportType reportType) {
+        this.reportType = reportType;
     }
 
 }
