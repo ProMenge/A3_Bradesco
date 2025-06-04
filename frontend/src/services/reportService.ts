@@ -55,14 +55,17 @@ export const createReport = async (
 };
 
 // reportService.ts
-export const deleteReport = async (reportId: number): Promise<void> => {
+export const deleteReport = async (
+  userId: number,
+  reportId: number,
+): Promise<void> => {
   try {
-    const response = await api.delete(`/user-reports/${reportId}`);
+    const response = await api.delete(
+      `/users/${userId}/user-reports/${reportId}`,
+    );
 
-    // Se for 200 ou 204, ok
     if (response.status === 200 || response.status === 204) return;
 
-    // Se for 400 mas sem body, considera sucesso
     if (
       response.status === 400 &&
       (!response.data || Object.keys(response.data).length === 0)

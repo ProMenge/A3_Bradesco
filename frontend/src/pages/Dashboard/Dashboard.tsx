@@ -21,7 +21,9 @@ export const Dashboard = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteReport(id);
+      if (!user) return;
+
+      await deleteReport(user.id, id);
       setReports((prev) => prev.filter((r) => r.id !== id));
       toast.success("Denúncia removida com sucesso!");
     } catch (err: any) {
