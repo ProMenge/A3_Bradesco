@@ -1,4 +1,9 @@
-import type { ReportTypeValue } from "../utils/enums/ReportType";
+import type { Report } from "../components/ReportList/ReportList";
+import {
+  ReportTypeCodeFromLabel,
+  type ReportTypeValue,
+} from "../utils/enums/ReportType";
+import { formatValue } from "../utils/format";
 import { api } from "./api";
 
 export interface ReportDTO {
@@ -20,10 +25,25 @@ export interface CreateReportDTO {
   reportValue: string;
 }
 
-// GET /user-reports
-export const getUserReports = async (): Promise<ReportDTO[]> => {
-  const res = await api.get("/user-reports");
-  return res.data;
+export const getUserReports = async (userId: number): Promise<Report[]> => {
+  const res = await api.get(`/users/${userId}/user-reports`);
+  const reports = res.data;
+
+  return reports.map((r: any) => {
+    const typeCode = ReportTypeCodeFromLabel[r.reportType]; // "EMAIL" → 3
+    return {
+      id: r.id,
+      reportType: typeCode as ReportTypeValue,
+      dataValue: formatValue(typeCode, r.reportValue),
+      date: new Date(r.reportMoment).toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+  });
 };
 
 // POST /user-reports

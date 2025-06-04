@@ -50,7 +50,8 @@ public class TestConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        User user1 = new User(null, "Igor", "11111111111", "igor@gmail.com", passwordEncoder.encode("123"));
+        User user1 = new User(null, "Igor", "11111111111", "igor@gmail.com",
+                passwordEncoder.encode("!2168731713jdAsa"));
         User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com",
                 passwordEncoder.encode("!2168731713jdAsa"));
         User user3 = new User(null, "Caue", "33333333333", "caue@gmail.com", passwordEncoder.encode("123"));

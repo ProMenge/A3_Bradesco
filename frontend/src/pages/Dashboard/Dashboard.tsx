@@ -10,9 +10,6 @@ import {
 } from "../../components/ReportList/ReportList";
 import { useAuth } from "../../hooks/useAuth";
 import { deleteReport, getUserReports } from "../../services/reportService";
-import { formatValue } from "../../utils/format";
-
-import { type ReportTypeValue } from "../../utils/enums/ReportType";
 
 import * as S from "./styles";
 
@@ -45,27 +42,9 @@ export const Dashboard = () => {
 
     const fetchReports = async () => {
       try {
-        const allReports = await getUserReports();
+        if (!user) return;
 
-        // Filtra apenas os reports do usuário logado
-        const userReports = allReports
-          .filter((r) => r.reporter.id === user?.id)
-          .map((r) => ({
-            id: r.id,
-            reportType: Number(r.reportType) as ReportTypeValue,
-            dataValue: formatValue(
-              Number(r.reportType) as ReportTypeValue,
-              r.reportValue,
-            ),
-            date: new Date().toLocaleString("pt-BR", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          }));
-
+        const userReports = await getUserReports(user.id);
         setReports(userReports);
       } catch (err) {
         toast.error("Erro ao buscar denúncias.");
@@ -73,9 +52,7 @@ export const Dashboard = () => {
       }
     };
 
-    if (user) {
-      fetchReports();
-    }
+    fetchReports();
   }, [user]);
 
   return (

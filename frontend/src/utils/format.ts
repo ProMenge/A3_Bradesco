@@ -8,10 +8,8 @@ export function formatValue(type: ReportTypeValue, value: string): string {
     case ReportType.CNPJ:
       return value.replace(
         /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
-        "$1.$2.$3/$4-$5"
+        "$1.$2.$3/$4-$5",
       );
-    case ReportType.CELLPHONE:
-      return value.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
     case ReportType.CELLPHONE:
       return value.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
     default:
