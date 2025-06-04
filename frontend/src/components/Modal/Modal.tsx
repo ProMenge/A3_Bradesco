@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { ReportType } from "../../utils/enums/ReportType";
 import { useAuth } from "../../hooks/useAuth";
 import { createReport } from "../../services/reportService";
-import * as S from "./styles";
+import { ReportType } from "../../utils/enums/ReportType";
 import { formatValue } from "../../utils/format";
 import type { Report } from "../ReportList/ReportList";
+import * as S from "./styles";
 
 interface ModalProps {
   onClose: () => void;
@@ -75,20 +75,21 @@ export const Modal = ({ onClose, onAdd }: ModalProps) => {
     const isValid = await validate(selectedType, data);
     if (!isValid) return;
 
-    const cleanValue = removeMask(data);
+    const cleanValue = ["CPF", "CNPJ", "CELLPHONE"].includes(selectedType)
+      ? removeMask(data)
+      : data.trim(); // mantém EMAIL e SITE intactos
     if (!user) {
       toast.error("Você precisa estar logado para enviar a denúncia.");
       return;
     }
 
     try {
-      const reportTypeCode = ReportType[selectedType]; // isso gera o número
-
-      const saved = await createReport({
-        reporterId: user.id,
-        reportTypeCode,
+      const saved = await createReport(user.id, {
+        reportType: selectedType,
         reportValue: cleanValue,
       });
+
+      const reportTypeCode = ReportType[selectedType];
 
       const formattedReport: Report = {
         id: saved.id,

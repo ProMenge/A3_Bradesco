@@ -1,5 +1,7 @@
-import { type ReportTypeValue } from "../../utils/enums/ReportType";
-import { ReportTypeLabel } from "../../utils/enums/ReportType";
+import {
+  ReportTypeLabel,
+  type ReportTypeValue,
+} from "../../utils/enums/ReportType";
 import * as S from "./styles";
 
 export interface Report {
@@ -14,7 +16,6 @@ interface ReportListProps {
 }
 
 export const ReportList = ({ reports, onDelete }: ReportListProps) => {
-  console.log(reports);
   return (
     <S.ListWrapper>
       <h3>Minhas denúncias</h3>

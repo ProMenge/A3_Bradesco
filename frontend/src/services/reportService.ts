@@ -20,8 +20,7 @@ export interface ReportDTO {
 }
 
 export interface CreateReportDTO {
-  reporterId: number;
-  reportTypeCode: number;
+  reportType: string; // agora string como "EMAIL", "SITE" etc.
   reportValue: string;
 }
 
@@ -46,11 +45,13 @@ export const getUserReports = async (userId: number): Promise<Report[]> => {
   });
 };
 
-// POST /user-reports
 export const createReport = async (
+  userId: number,
   reportData: CreateReportDTO,
 ): Promise<ReportDTO> => {
-  const res = await api.post("/user-reports", reportData);
+  console.log("dados enviados", reportData);
+  const res = await api.post(`/users/${userId}/user-reports`, reportData);
+  console.log("dados enviados", res);
   return res.data;
 };
 
