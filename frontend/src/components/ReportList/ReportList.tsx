@@ -9,10 +9,11 @@ export interface Report {
   reportType: ReportTypeValue;
   dataValue: string;
   date: string;
+  rawValue: string;
 }
 interface ReportListProps {
   reports: Report[];
-  onDelete: (id: number) => void;
+  onDelete: (id: number, type: ReportTypeValue, rawValue: string) => void;
 }
 
 export const ReportList = ({ reports, onDelete }: ReportListProps) => {
@@ -39,7 +40,12 @@ export const ReportList = ({ reports, onDelete }: ReportListProps) => {
             </div>
 
             <div className="actions">
-              <S.ActionButton onClick={() => onDelete(report.id)} delete>
+              <S.ActionButton
+                onClick={() =>
+                  onDelete(report.id, report.reportType, report.rawValue)
+                }
+                delete
+              >
                 Retirar Denúncia
               </S.ActionButton>
             </div>

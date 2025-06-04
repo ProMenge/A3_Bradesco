@@ -9,8 +9,16 @@ import {
   ReportList,
 } from "../../components/ReportList/ReportList";
 import { useAuth } from "../../hooks/useAuth";
-import { deleteReport, getUserReports } from "../../services/reportService";
+import {
+  deleteFromSpecificReportTable,
+  deleteReport,
+  getUserReports,
+} from "../../services/reportService";
 
+import {
+  ReportTypeLabel,
+  type ReportTypeValue,
+} from "../../utils/enums/ReportType";
 import * as S from "./styles";
 
 export const Dashboard = () => {
@@ -19,14 +27,20 @@ export const Dashboard = () => {
 
   const { user } = useAuth();
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (
+    id: number,
+    type: ReportTypeValue,
+    rawValue: string,
+  ) => {
     try {
       if (!user) return;
 
       await deleteReport(user.id, id);
+      await deleteFromSpecificReportTable(ReportTypeLabel[type], rawValue);
+
       setReports((prev) => prev.filter((r) => r.id !== id));
       toast.success("Denúncia removida com sucesso!");
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       toast.error("Erro ao remover denúncia. Tente novamente.");
     }

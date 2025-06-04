@@ -33,6 +33,7 @@ export const getUserReports = async (userId: number): Promise<Report[]> => {
     return {
       id: r.id,
       reportType: typeCode as ReportTypeValue,
+      rawValue: r.reportValue,
       dataValue: formatValue(typeCode, r.reportValue),
       date: new Date(r.reportMoment).toLocaleString("pt-BR", {
         day: "2-digit",
@@ -51,7 +52,6 @@ export const createReport = async (
 ): Promise<ReportDTO> => {
   console.log("dados enviados", reportData);
   const res = await api.post(`/users/${userId}/user-reports`, reportData);
-  console.log("dados enviados", res);
   return res.data;
 };
 
@@ -80,4 +80,44 @@ export const deleteReport = async (
     console.error("Erro no deleteReport:", error);
     throw error;
   }
+};
+
+export const saveToSpecificReportTable = async (
+  type: string,
+  value: string,
+): Promise<void> => {
+  const routeMap: Record<string, { path: string; field: string }> = {
+    CPF: { path: "/cpf-reports", field: "cpf" },
+    CNPJ: { path: "/cnpj-reports", field: "cnpj" },
+    CELLPHONE: { path: "/cellphone-reports", field: "cellphone" },
+    EMAIL: { path: "/email-reports", field: "email" },
+    SITE: { path: "/site-reports", field: "site" },
+  };
+
+  const routeInfo = routeMap[type];
+  if (!routeInfo) throw new Error(`Unknown report type: ${type}`);
+
+  const body = { [routeInfo.field]: value };
+
+  await api.post(routeInfo.path, body);
+};
+
+export const deleteFromSpecificReportTable = async (
+  type: string,
+  value: string,
+): Promise<void> => {
+  const routeMap: Record<string, string> = {
+    CPF: "/cpf-reports",
+    CNPJ: "/cnpj-reports",
+    CELLPHONE: "/cellphone-reports",
+    EMAIL: "/email-reports",
+    SITE: "/site-reports",
+  };
+
+  console.log("deletando da raiz", value);
+
+  const route = routeMap[type];
+  if (!route) throw new Error(`Unknown report type: ${type}`);
+
+  await api.delete(`${route}/${value}`);
 };

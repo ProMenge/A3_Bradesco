@@ -2,7 +2,10 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { useAuth } from "../../hooks/useAuth";
-import { createReport } from "../../services/reportService";
+import {
+  createReport,
+  saveToSpecificReportTable,
+} from "../../services/reportService";
 import { ReportType } from "../../utils/enums/ReportType";
 import { formatValue } from "../../utils/format";
 import type { Report } from "../ReportList/ReportList";
@@ -89,11 +92,15 @@ export const Modal = ({ onClose, onAdd }: ModalProps) => {
         reportValue: cleanValue,
       });
 
+      await saveToSpecificReportTable(selectedType, cleanValue);
+
       const reportTypeCode = ReportType[selectedType];
 
       const formattedReport: Report = {
         id: saved.id,
         reportType: reportTypeCode,
+        rawValue: cleanValue,
+
         dataValue: formatValue(reportTypeCode, cleanValue),
         date: new Date().toLocaleString("pt-BR", {
           day: "2-digit",
