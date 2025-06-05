@@ -1,12 +1,13 @@
+import axios, { AxiosError } from "axios"; // Importe AxiosError
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-toastify"; // Certifique-se de que toast está importado
 import * as Yup from "yup";
 import { useAuth } from "../../hooks/useAuth";
 import {
   createReport,
   saveToSpecificReportTable,
 } from "../../services/reportService";
-import { ReportType } from "../../utils/enums/ReportType";
+import { ReportType, ReportTypeLabel } from "../../utils/enums/ReportType";
 import { formatValue } from "../../utils/format";
 import type { Report } from "../ReportList/ReportList";
 import * as S from "./styles";
@@ -53,16 +54,19 @@ export const Modal = ({ onClose, onAdd }: ModalProps) => {
         ),
         EMAIL: Yup.string().email("E-mail inválido"),
         SITE: Yup.string().matches(
-          /^(?!:\/\/)([a-zA-Z0-9-_]+\.)+[a-zA-Z]{2,}$/,
-          "URL inválida",
+          // Regex atualizada para incluir http:// e https://
+          /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/\S*)?$/,
+          "URL inválida (ex: https://exemplo.com)",
         ),
       };
-      await (schemaMap[type]?.required() || Yup.string().required()).validate(
-        value.trim(),
-      );
+      await (
+        schemaMap[type]?.required("Campo obrigatório") ||
+        Yup.string().required("Campo obrigatório")
+      ).validate(value.trim());
       return true;
     } catch (err: any) {
-      alert(err.message);
+      // Alterado de alert para toast.error
+      toast.error(err.message);
       return false;
     }
   };
@@ -73,14 +77,17 @@ export const Modal = ({ onClose, onAdd }: ModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedType) return;
+    if (!selectedType) {
+      toast.error("Por favor, selecione um tipo de denúncia.");
+      return;
+    }
 
     const isValid = await validate(selectedType, data);
-    if (!isValid) return;
+    if (!isValid) return; // A validação já exibiu o toast de erro
 
     const cleanValue = ["CPF", "CNPJ", "CELLPHONE"].includes(selectedType)
       ? removeMask(data)
-      : data.trim(); // mantém EMAIL e SITE intactos
+      : data.trim();
     if (!user) {
       toast.error("Você precisa estar logado para enviar a denúncia.");
       return;
@@ -115,8 +122,46 @@ export const Modal = ({ onClose, onAdd }: ModalProps) => {
       toast.success("Denúncia enviada com sucesso!");
       onClose();
     } catch (err) {
-      toast.error("Erro ao enviar denúncia.");
       console.error(err);
+
+      let errorMessage = "Erro inesperado ao enviar denúncia.";
+
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+
+        if (axiosError.response) {
+          if (typeof axiosError.response.data === "string") {
+            errorMessage = axiosError.response.data;
+          } else if (
+            typeof axiosError.response.data === "object" &&
+            axiosError.response.data !== null &&
+            "message" in axiosError.response.data &&
+            typeof (axiosError.response.data as any).message === "string"
+          ) {
+            errorMessage = (axiosError.response.data as any).message;
+          } else if (
+            typeof axiosError.response.data === "object" &&
+            axiosError.response.data !== null &&
+            "errors" in axiosError.response.data &&
+            Array.isArray((axiosError.response.data as any).errors)
+          ) {
+            const validationErrors = (axiosError.response.data as any).errors
+              .map((error: any) => error.defaultMessage || error.message)
+              .filter(Boolean);
+            if (validationErrors.length > 0) {
+              errorMessage = validationErrors.join(", ");
+            }
+          }
+        } else if (axiosError.request) {
+          errorMessage = "Nenhuma resposta do servidor. Verifique sua conexão.";
+        } else {
+          errorMessage = axiosError.message;
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     }
   };
 
@@ -127,7 +172,7 @@ export const Modal = ({ onClose, onAdd }: ModalProps) => {
 
         {!selectedType ? (
           <>
-            <h2>Selecione o tipo de denúncia</h2>
+            <h2>Denunciar {selectedType}</h2>
             <S.TypeList>
               {Object.keys(ReportType).map((type) => (
                 <button
@@ -136,17 +181,17 @@ export const Modal = ({ onClose, onAdd }: ModalProps) => {
                     setSelectedType(type as keyof typeof ReportType)
                   }
                 >
-                  {type}
+                  {ReportTypeLabel[ReportType[type as keyof typeof ReportType]]}
                 </button>
               ))}
             </S.TypeList>
           </>
         ) : (
           <>
-            <h2>Denunciar {selectedType}</h2>
+            <h2>Denunciar {ReportTypeLabel[ReportType[selectedType]]}</h2>
             <form onSubmit={handleSubmit}>
               <label>
-                Informe o {selectedType.toUpperCase()}:
+                Informe o {ReportTypeLabel[ReportType[selectedType]]}:
                 {["CPF", "CNPJ", "CELLPHONE"].includes(selectedType) ? (
                   <S.MaskedInput
                     mask={getMaskByType(selectedType)}

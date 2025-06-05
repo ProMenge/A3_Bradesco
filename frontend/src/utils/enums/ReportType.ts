@@ -8,7 +8,7 @@ export const ReportType = {
 } as const;
 
 // Tipo que representa um valor válido do enum (1 a 5)
-export type ReportTypeValue = typeof ReportType[keyof typeof ReportType];
+export type ReportTypeValue = (typeof ReportType)[keyof typeof ReportType];
 
 // Labels legíveis para o usuário final
 export const ReportTypeLabel: Record<ReportTypeValue, string> = {
@@ -16,7 +16,7 @@ export const ReportTypeLabel: Record<ReportTypeValue, string> = {
   [ReportType.CNPJ]: "CNPJ",
   [ReportType.EMAIL]: "EMAIL",
   [ReportType.SITE]: "SITE",
-  [ReportType.CELLPHONE]: "CELLPHONE",
+  [ReportType.CELLPHONE]: "Celular",
 };
 
 // (Opcional) Labels invertidos para converter de string para código

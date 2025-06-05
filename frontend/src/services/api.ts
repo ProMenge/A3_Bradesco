@@ -25,7 +25,7 @@ api.interceptors.request.use(
   (error) => {
     // Caso ocorra erro antes da requisição sair
     return Promise.reject(error);
-  }
+  },
 );
 
 // 3. Interceptador de resposta
@@ -38,11 +38,6 @@ api.interceptors.response.use(
     // Resposta com erro: analisa o código
     const status = error.response?.status;
 
-    if (status === 401) {
-      toast.error("Sessão expirada. Faça login novamente.");
-      // Aqui você poderia forçar logout se quisesse
-    }
-
     if (status === 403) {
       toast.error("Você não tem permissão para essa ação.");
     }
@@ -53,5 +48,5 @@ api.interceptors.response.use(
 
     // Retorna o erro para o .catch de quem chamou a API
     return Promise.reject(error);
-  }
+  },
 );

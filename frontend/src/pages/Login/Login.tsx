@@ -1,14 +1,15 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import axios, { AxiosError } from "axios"; // Importe Axios e AxiosError
+import { ErrorMessage, Field, Form, Formik, type FormikHelpers } from "formik";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import * as Yup from "yup";
 import LoginBackground from "../../assets/LoginBackground.png";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
-import * as S from "./styles";
-import { loginUser, registerUser } from "../../services/authService";
 import { useAuth } from "../../hooks/useAuth";
+import { loginUser, registerUser } from "../../services/authService";
+import * as S from "./styles";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 const nameRegex = /^([A-Za-zÀ-ÖØ-öø-ÿ]+[-']?\s+){1,}[A-Za-zÀ-ÖØ-öø-ÿ]+[-']?$/;
@@ -64,12 +65,16 @@ export const Login = () => {
       .required("Campo obrigatório"),
   });
 
-  const handleSubmit = async (values: typeof initialValues) => {
+  const handleSubmit = async (
+    values: typeof initialValues,
+    formikHelpers: FormikHelpers<typeof initialValues>,
+  ) => {
     try {
       if (isRegistering) {
         const { name, email, cpf, password } = values;
         await registerUser({ name, email, cpf, password });
         toast.success("Cadastro realizado!");
+        formikHelpers.resetForm();
         setIsRegistering(false);
         return;
       }
@@ -79,8 +84,76 @@ export const Login = () => {
       login(user);
       toast.success("Login realizado!");
       navigate("/dashboard");
-    } catch (err: any) {
-      toast.error(err.message || "Erro ao autenticar.");
+    } catch (err) {
+      // Removido ': any' para melhor tipagem
+      console.log("erro aqui", err); // Mantenha para depuração
+
+      let errorMessage = "Erro inesperado ao autenticar."; // Mensagem padrão de fallback
+
+      // 1. Verifique se é um erro do Axios
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError; // Cast para AxiosError
+
+        // 2. Verifique se o erro tem uma resposta do servidor
+        if (axiosError.response) {
+          // A estrutura de axiosError.response.data depende do seu backend (Spring Boot)
+          // Cenário 1: String direta (como no seu User Controller: .body(e.getMessage()))
+          if (typeof axiosError.response.data === "string") {
+            errorMessage = axiosError.response.data;
+          }
+          // Cenário 2: Objeto com propriedade 'message'
+          else if (
+            typeof axiosError.response.data === "object" &&
+            axiosError.response.data !== null &&
+            "message" in axiosError.response.data &&
+            typeof (axiosError.response.data as any).message === "string"
+          ) {
+            errorMessage = (axiosError.response.data as any).message;
+          }
+          // Cenário 3: Objeto com lista de 'errors' (erros de validação, ex: Spring's MethodArgumentNotValidException)
+          else if (
+            typeof axiosError.response.data === "object" &&
+            axiosError.response.data !== null &&
+            "errors" in axiosError.response.data &&
+            Array.isArray((axiosError.response.data as any).errors)
+          ) {
+            const validationErrors = (axiosError.response.data as any).errors
+              .map((error: any) => error.defaultMessage || error.message)
+              .filter(Boolean); // Filtra mensagens vazias
+            if (validationErrors.length > 0) {
+              errorMessage = validationErrors.join(", "); // Junta as mensagens de erro
+            } else if (
+              "message" in axiosError.response.data &&
+              typeof (axiosError.response.data as any).message === "string"
+            ) {
+              // Em alguns casos de validação, pode haver uma mensagem geral além dos campos específicos
+              errorMessage = (axiosError.response.data as any).message;
+            }
+          }
+          // Cenário 4: Outros formatos de erro que seu backend possa retornar (adapte conforme necessário)
+          // Ex: { "detail": "Recurso não encontrado" }
+          else if (
+            typeof axiosError.response.data === "object" &&
+            axiosError.response.data !== null &&
+            "detail" in axiosError.response.data &&
+            typeof (axiosError.response.data as any).detail === "string"
+          ) {
+            errorMessage = (axiosError.response.data as any).detail;
+          }
+        } else if (axiosError.request) {
+          // A requisição foi feita, mas nenhuma resposta foi recebida (ex: rede offline, CORS bloqueado)
+          errorMessage =
+            "Nenhuma resposta recebida do servidor. Verifique sua conexão.";
+        } else {
+          // Algo aconteceu na configuração da requisição que disparou um erro
+          errorMessage = axiosError.message; // Mensagem de erro do próprio Axios
+        }
+      } else if (err instanceof Error) {
+        // Erro genérico do JavaScript (ex: erro de tipagem no frontend, etc.)
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage); // Exibe a mensagem de erro específica
     }
   };
 
@@ -92,7 +165,7 @@ export const Login = () => {
           validationSchema={isRegistering ? registerSchema : loginSchema}
           onSubmit={handleSubmit}
         >
-          {({ setFieldValue, values }) => (
+          {({ setFieldValue, values, resetForm }) => (
             <Form className="form-content">
               <h1>
                 {isRegistering ? "Crie sua conta" : "Bem-vindo de volta!"}
@@ -213,7 +286,12 @@ export const Login = () => {
 
               <p className="signup-text">
                 {isRegistering ? "Já tem uma conta?" : "Não tem uma conta?"}
-                <a onClick={() => setIsRegistering(!isRegistering)}>
+                <a
+                  onClick={() => {
+                    resetForm();
+                    setIsRegistering(!isRegistering);
+                  }}
+                >
                   {isRegistering ? " Entrar" : " Criar conta"}
                 </a>
               </p>

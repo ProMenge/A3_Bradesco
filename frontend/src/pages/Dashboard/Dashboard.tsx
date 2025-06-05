@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ListBackground from "../../assets/ReportBackground.jpg";
 import { Button } from "../../components/Button/Button";
@@ -24,8 +25,9 @@ import * as S from "./styles";
 export const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reports, setReports] = useState<Report[]>([]);
-
   const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleDelete = async (
     id: number,
@@ -47,15 +49,30 @@ export const Dashboard = () => {
   };
 
   useEffect(() => {
-    const scrollTarget = localStorage.getItem("scrollTo");
-    if (scrollTarget) {
-      const section = document.getElementById(scrollTarget);
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
+    const handleInitialActions = () => {
+      // Verifica se há um estado para abrir o modal
+      if (location.state && (location.state as any).openReportModal) {
+        setIsModalOpen(true);
+        // Limpa o estado da navegação IMEDIATAMENTE após usar
+        navigate(location.pathname, { replace: true, state: {} });
+        return; // Sai da função para não executar a lógica de scroll neste caso
       }
-      localStorage.removeItem("scrollTo");
-    }
 
+      // Lógica de rolagem: Só executa se não for para abrir o modal
+      const scrollTarget = localStorage.getItem("scrollTo");
+      if (scrollTarget) {
+        const section = document.getElementById(scrollTarget);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+        localStorage.removeItem("scrollTo");
+      }
+    };
+
+    // Chama a função de ações iniciais uma vez que o componente é montado ou o location muda
+    handleInitialActions();
+
+    // Lógica para buscar denúncias
     const fetchReports = async () => {
       try {
         if (!user) return;
@@ -69,7 +86,7 @@ export const Dashboard = () => {
     };
 
     fetchReports();
-  }, [user]);
+  }, [user, location, navigate]); // Adicione navigate às dependências, pois está sendo usado dentro do useEffect
 
   return (
     <S.Container>
@@ -85,7 +102,7 @@ export const Dashboard = () => {
         </div>
         <Button
           onClick={() => {
-            setIsModalOpen(true);
+            setIsModalOpen(true); // Este botão continua abrindo o modal diretamente
           }}
         >
           Fazer Denúncia

@@ -111,7 +111,7 @@ export const Badge = styled.span<BadgeProps>`
         return "#009688"; // teal
       case "EMAIL":
         return "#f9a825"; // amarelo
-      case "Telefone":
+      case "Celular":
         return "#43a047"; // verde
       case "URL/Site":
         return "#e53935"; // vermelho
