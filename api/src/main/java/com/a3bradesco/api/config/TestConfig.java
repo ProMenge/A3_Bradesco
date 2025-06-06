@@ -31,7 +31,7 @@ import com.a3bradesco.api.repositories.UserRepository;
 public class TestConfig implements CommandLineRunner {
 
     @Autowired
-	private UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private UserReportRepository reportRepository;
     @Autowired
@@ -48,10 +48,12 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-	@Override
-	public void run(String... args) throws Exception {
-		User user1 = new User(null, "Igor", "11111111111", "igor@gmail.com", passwordEncoder.encode("123"));
-        User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com", passwordEncoder.encode("123"));
+    @Override
+    public void run(String... args) throws Exception {
+        User user1 = new User(null, "Igor", "11111111111", "igor@gmail.com",
+                passwordEncoder.encode("!2168731713jdAsa"));
+        User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com",
+                passwordEncoder.encode("!2168731713jdAsa"));
         User user3 = new User(null, "Caue", "33333333333", "caue@gmail.com", passwordEncoder.encode("123"));
 
         UserReport report1 = new UserReport(null, user1, ReportType.CPF, "12312312312", LocalDateTime.now());
@@ -79,8 +81,8 @@ public class TestConfig implements CommandLineRunner {
         emailReportRepository.saveAll(Arrays.asList(emailReport1, emailReport2));
         cellphoneReportRepository.saveAll(Arrays.asList(cellphoneReport1, cellphoneReport2));
         cnpjReportRepository.saveAll(Arrays.asList(cnpjReport1, cnpjReport2));
-		userRepository.saveAll(Arrays.asList(user1, user2, user3));
+        userRepository.saveAll(Arrays.asList(user1, user2, user3));
         reportRepository.saveAll(Arrays.asList(report1, report2, report3, report4, report5));
         cpfReportRepository.saveAll(Arrays.asList(cpfReport1, cpfReport2));
-	}
+    }
 }

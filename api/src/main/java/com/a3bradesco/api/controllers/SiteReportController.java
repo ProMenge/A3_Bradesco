@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -20,11 +21,10 @@ import com.a3bradesco.api.services.SiteReportService;
 
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("/site-reports")
 public class SiteReportController {
-    
+
     @Autowired
     SiteReportService siteReportService;
 
@@ -35,7 +35,7 @@ public class SiteReportController {
     }
 
     @GetMapping("/{site}")
-    public ResponseEntity<SiteReport> findById(@PathVariable String site){
+    public ResponseEntity<SiteReport> findById(@PathVariable String site) {
         SiteReport report = siteReportService.findById(site);
         return ResponseEntity.ok().body(report);
     }
@@ -45,13 +45,13 @@ public class SiteReportController {
         SiteReport saved = siteReportService.saveNewReport(dto.getSite());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                  .path("/{id}").buildAndExpand(saved.getSite()).toUri();
+                .path("/{id}").buildAndExpand(saved.getSite()).toUri();
 
         return ResponseEntity.created(uri).body(saved);
     }
 
-    @DeleteMapping("/{site}")
-    public ResponseEntity<String> deleteReport(@PathVariable String site){
+    @DeleteMapping()
+    public ResponseEntity<String> deleteReport(@RequestParam String site) {
         siteReportService.deleteReport(site);
         return ResponseEntity.ok("Denúncia retirada com sucesso!");
     }

@@ -109,12 +109,16 @@ export const Badge = styled.span<BadgeProps>`
         return "#5c6bc0"; // azul
       case "CNPJ":
         return "#009688"; // teal
-      case "Email":
+      case "EMAIL":
         return "#f9a825"; // amarelo
-      case "Telefone":
+      case "Celular":
         return "#43a047"; // verde
       case "URL/Site":
         return "#e53935"; // vermelho
+      case "SITE":
+        return "#e53935"; // vermelho
+      case "CELLPHONE":
+        return "#43a047";
       default:
         return "#757575"; // cinza
     }
