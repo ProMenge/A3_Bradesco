@@ -1,8 +1,11 @@
 package com.a3bradesco.api.controllers;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
@@ -34,10 +37,13 @@ class CellphoneReportControllerTest {
 
     @BeforeEach
     void setup() {
-        CellphoneReport report = new CellphoneReport(validCellphone, 1, LocalDate.now());
-        when(service.saveNewReport(anyString())).thenReturn(report);
-    }
+    CellphoneReport report = new CellphoneReport(validCellphone, 1, LocalDate.now());
 
+    when(service.saveNewReport(anyString())).thenReturn(report);
+    when(service.findById(validCellphone)).thenReturn(report); // NECESSÁRIO PARA O GET
+    doNothing().when(service).deleteReport(validCellphone);    // NECESSÁRIO PARA O DELETE
+}
+    
     // 1. Cellphone com 11 dígitos(com o DDD incluso) - deve retornar Created (201)
     @Test
     void whenValidCellphone_thenReturnsCreated() throws Exception {
@@ -102,9 +108,18 @@ class CellphoneReportControllerTest {
             .content("{\"cellphone\": \"" + cellphoneWithSymbols + "\"}"))
             .andExpect(status().isBadRequest());
 }
+     // 7. GET - Busca um celular válido e espera OK
+    @Test
+    void whenGetValidCellphone_thenReturnsOk() throws Exception {
+        mockMvc.perform(get("/cellphone-reports/" + validCellphone))
+                .andExpect(status().isOk());
+    }
 
-
-
-
-
+    // 8. DELETE - Remove um celular válido e espera NoContent
+    @Test
+    void whenDeleteValidCellphone_thenReturnsNoContent() throws Exception {
+        mockMvc.perform(delete("/cellphone-reports/" + validCellphone))
+                .andExpect(status().isNoContent());
+    }
+    
 }

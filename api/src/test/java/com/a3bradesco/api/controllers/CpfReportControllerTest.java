@@ -3,6 +3,8 @@ package com.a3bradesco.api.controllers;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
@@ -100,6 +102,20 @@ class CpfReportControllerTest {
             .content("{\"cpf\": \"" + cpfWithSymbols + "\"}"))
             .andExpect(status().isBadRequest());
 }
+   // 7. GET - Busca um celular válido e espera OK
+    @Test
+    void whenGetValidCpf_thenReturnsOk() throws Exception {
+        mockMvc.perform(get("/cpf-reports/" + validCpf))
+                .andExpect(status().isOk());
+    }
+
+    // 8. DELETE - Remove um celular válido e espera NoContent
+    @Test
+    void whenDeleteValidCpf_thenReturnsNoContent() throws Exception {
+        mockMvc.perform(delete("/cpf-reports/" + validCpf))
+                .andExpect(status().isNoContent());
+    }
+    
 
 
 

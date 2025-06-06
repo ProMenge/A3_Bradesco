@@ -1,7 +1,14 @@
 package com.a3bradesco.api.controllers;
 
-import com.a3bradesco.api.entities.EmailReport;
-import com.a3bradesco.api.services.EmailReportService;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +18,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.a3bradesco.api.entities.EmailReport;
+import com.a3bradesco.api.services.EmailReportService;
 
 @AutoConfigureMockMvc(addFilters = false) // Ignorei a segurança do teste para evitar o erro 403, desativando a autenticação e autorização
 @WebMvcTest(EmailReportController.class)
@@ -107,4 +110,18 @@ class EmailReportControllerTest {
                 .content(json))
                 .andExpect(status().isBadRequest());
     }
+       // 7. GET - Busca um celular válido e espera OK
+    @Test
+    void whenGetValidEmail_thenReturnsOk() throws Exception {
+        mockMvc.perform(get("/email-reports/" + validEmail))
+                .andExpect(status().isOk());
+    }
+
+    // 8. DELETE - Remove um celular válido e espera NoContent
+    @Test
+    void whenDeleteValidEmail_thenReturnsNoContent() throws Exception {
+        mockMvc.perform(delete("/email-reports/" + validEmail))
+                .andExpect(status().isNoContent());
+    }
+    
 }

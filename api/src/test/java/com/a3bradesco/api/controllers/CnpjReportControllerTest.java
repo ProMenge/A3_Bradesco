@@ -3,6 +3,8 @@ package com.a3bradesco.api.controllers;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
@@ -100,6 +102,20 @@ class CnpjReportControllerTest {
             .content("{\"cnpj\": \"" + cnpjWithSymbols + "\"}"))
             .andExpect(status().isBadRequest());
 }
+    // 7. GET - Busca um Cnpj válido e espera OK
+    @Test
+    void whenGetValidCnpj_thenReturnsOk() throws Exception {
+        mockMvc.perform(get("/cnpj-reports/" + validCnpj))
+                .andExpect(status().isOk());
+    }
+
+    // 8. DELETE - Remove um Cnpj válido e espera NoContent
+    @Test
+    void whenDeleteValidCnpj_thenReturnsNoContent() throws Exception {
+        mockMvc.perform(delete("/cnpj-reports/" + validCnpj))
+                .andExpect(status().isNoContent());
+    }
+    
 
 
 

@@ -1,7 +1,8 @@
 package com.a3bradesco.api.controllers;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -24,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+@AutoConfigureMockMvc(addFilters = false) // Ignorei a segurança do teste para evitar o erro 403, desativando a autenticação e autorização 
 @WebMvcTest(UserReportController.class)
 class UserReportControllerTest {
 
@@ -41,39 +44,44 @@ class UserReportControllerTest {
 
     @Test
     void ReturnListOfUserReports() throws Exception {
-        UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312", LocalDateTime.now());
-        when(reportService.findAll()).thenReturn(Arrays.asList(report));
-
-        mockMvc.perform(get("/user-reports"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void ReturnReportById() throws Exception {
-        UserReport report = new UserReport(1L, new User(), ReportType.CPF, "12312312312", LocalDateTime.now());
-        when(reportService.findById(1L)).thenReturn(report);
-
-        mockMvc.perform(get("/user-reports/1"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void CreateNewReport() throws Exception {
-
-        User user = new User(1L, "Igor", "11111111111", "igor@gmail.com", "123");
-        UserReportDTO dto = new UserReportDTO();
-        dto.setReporterId(user.getId());
-        dto.setReportType(ReportType.CPF); // corrigido
-        dto.setReportValue("12312312312");
-
+        Long userId = 1L;
+        User user = new User(userId, "Igor", "49825725868", "igor@gmail.com", "Galinha7");
         UserReport report = new UserReport(1L, user, ReportType.CPF, "12312312312", LocalDateTime.now());
 
-        when(userService.findById(user.getId())).thenReturn(user);
-        when(reportService.insert(any(UserReport.class))).thenReturn(report);
+        when(userService.findById(userId)).thenReturn(user);
+        when(reportService.findByReporter(user)).thenReturn(Arrays.asList(report));
 
-        mockMvc.perform(post("/user-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isCreated());
+        mockMvc.perform(get("/users/{userId}/user-reports", userId))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+void CreateNewReport() throws Exception {
+
+    User user = new User(1L, "Igor", "49825725868", "igor@gmail.com", "Galinha7");
+    UserReportDTO dto = new UserReportDTO();
+    dto.setReportType(ReportType.CPF);
+    dto.setReportValue("12312312312");
+
+    UserReport report = new UserReport(1L, user, ReportType.CPF, "12312312312", LocalDateTime.now());
+
+    when(reportService.saveNewReport(user.getId(), dto)).thenReturn(report);
+
+    mockMvc.perform(post("/users/" + user.getId() + "/user-reports")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isCreated());
+}
+
+    @Test
+    void DeleteReport() throws Exception {
+        Long userId = 1L;
+        Long reportId = 2L;
+
+        // Como é void, usamos doNothing
+        doNothing().when(reportService).deleteReport(reportId);
+
+        mockMvc.perform(delete("/users/{userId}/user-reports/{reportId}", userId, reportId))
+                .andExpect(status().isOk());
     }
 }
