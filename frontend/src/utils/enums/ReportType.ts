@@ -27,3 +27,14 @@ export const ReportTypeCodeFromLabel: Record<string, ReportTypeValue> = {
   SITE: ReportType.SITE,
   CELLPHONE: ReportType.CELLPHONE,
 };
+
+export const ReportTypeLabelFromCode: Record<
+  ReportTypeValue,
+  keyof typeof ReportType
+> = {
+  1: "CPF",
+  2: "CNPJ",
+  3: "EMAIL",
+  4: "SITE",
+  5: "CELLPHONE",
+};

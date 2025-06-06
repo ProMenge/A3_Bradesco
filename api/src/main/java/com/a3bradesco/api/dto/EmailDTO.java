@@ -5,8 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public class EmailDTO {
     @NotBlank
-    @Email(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-z]{2,3}",
-           message = "Insira um e-mail válido")
+    @Email(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-z]+", message = "Insira um e-mail válido")
     private String email;
 
     public String getEmail() {
@@ -16,5 +15,5 @@ public class EmailDTO {
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
 }

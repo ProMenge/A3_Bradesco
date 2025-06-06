@@ -54,8 +54,7 @@ export const Modal = ({ onClose, onAdd }: ModalProps) => {
         ),
         EMAIL: Yup.string().email("E-mail inválido"),
         SITE: Yup.string().matches(
-          // Regex atualizada para incluir http:// e https://
-          /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/\S*)?$/,
+          /^(https?:\/\/)?(www\.)?[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]{2,}(\/.*)?$/,
           "URL inválida (ex: https://exemplo.com)",
         ),
       };

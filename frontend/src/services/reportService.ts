@@ -20,7 +20,7 @@ export interface ReportDTO {
 }
 
 export interface CreateReportDTO {
-  reportType: string; // agora string como "EMAIL", "SITE" etc.
+  reportType: string;
   reportValue: string;
 }
 
@@ -29,7 +29,7 @@ export const getUserReports = async (userId: number): Promise<Report[]> => {
   const reports = res.data;
 
   return reports.map((r: any) => {
-    const typeCode = ReportTypeCodeFromLabel[r.reportType]; // "EMAIL" → 3
+    const typeCode = ReportTypeCodeFromLabel[r.reportType];
     return {
       id: r.id,
       reportType: typeCode as ReportTypeValue,
@@ -50,12 +50,10 @@ export const createReport = async (
   userId: number,
   reportData: CreateReportDTO,
 ): Promise<ReportDTO> => {
-  console.log("dados enviados", reportData);
   const res = await api.post(`/users/${userId}/user-reports`, reportData);
   return res.data;
 };
 
-// reportService.ts
 export const deleteReport = async (
   userId: number,
   reportId: number,
@@ -98,7 +96,6 @@ export const saveToSpecificReportTable = async (
   if (!routeInfo) throw new Error(`Unknown report type: ${type}`);
 
   const body = { [routeInfo.field]: value };
-
   await api.post(routeInfo.path, body);
 };
 
@@ -106,18 +103,27 @@ export const deleteFromSpecificReportTable = async (
   type: string,
   value: string,
 ): Promise<void> => {
-  const routeMap: Record<string, string> = {
-    CPF: "/cpf-reports",
-    CNPJ: "/cnpj-reports",
-    CELLPHONE: "/cellphone-reports",
-    EMAIL: "/email-reports",
-    SITE: "/site-reports",
+  const routeMap: Record<
+    string,
+    { path: string; isQueryParam?: boolean; paramName?: string }
+  > = {
+    CPF: { path: "/cpf-reports" },
+    CNPJ: { path: "/cnpj-reports" },
+    CELLPHONE: { path: "/cellphone-reports" },
+    EMAIL: { path: "/email-reports" },
+    SITE: { path: "/site-reports", isQueryParam: true, paramName: "site" },
   };
 
-  console.log("deletando da raiz", value);
+  const routeInfo = routeMap[type];
+  if (!routeInfo) throw new Error(`Unknown report type: ${type}`);
 
-  const route = routeMap[type];
-  if (!route) throw new Error(`Unknown report type: ${type}`);
-
-  await api.delete(`${route}/${value}`);
+  if (routeInfo.isQueryParam && routeInfo.paramName) {
+    // Exemplo: DELETE /site-reports?site=mock.com
+    await api.delete(routeInfo.path, {
+      params: { [routeInfo.paramName]: value },
+    });
+  } else {
+    // Exemplo: DELETE /cpf-reports/12345678900
+    await api.delete(`${routeInfo.path}/${value}`);
+  }
 };

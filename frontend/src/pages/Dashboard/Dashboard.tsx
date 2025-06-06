@@ -17,7 +17,7 @@ import {
 } from "../../services/reportService";
 
 import {
-  ReportTypeLabel,
+  ReportTypeLabelFromCode,
   type ReportTypeValue,
 } from "../../utils/enums/ReportType";
 import * as S from "./styles";
@@ -38,7 +38,10 @@ export const Dashboard = () => {
       if (!user) return;
 
       await deleteReport(user.id, id);
-      await deleteFromSpecificReportTable(ReportTypeLabel[type], rawValue);
+      await deleteFromSpecificReportTable(
+        ReportTypeLabelFromCode[type],
+        rawValue,
+      );
 
       setReports((prev) => prev.filter((r) => r.id !== id));
       toast.success("Denúncia removida com sucesso!");
