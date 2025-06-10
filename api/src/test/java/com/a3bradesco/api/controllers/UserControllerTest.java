@@ -59,7 +59,7 @@ public class UserControllerTest {
     @Test
     void CreateNewUser() throws Exception {
         UserDTO dto = new UserDTO();
-        dto.setName("Igor");
+        dto.setName("Igor Molina");
         dto.setCpf("49194125867");
         dto.setEmail("igor@gmail.com");
         dto.setPassword("Galinha7");

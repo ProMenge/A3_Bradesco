@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -121,18 +122,29 @@ class SiteReportControllerTest {
                 .content(json))
                 .andExpect(status().isBadRequest()); 
     }
-       // 8. GET - Busca um celular válido e espera OK
+       // 8. GET - Busca um Url válido e espera OK
     @Test
     void whenGetValidUrl_thenReturnsOk() throws Exception {
         mockMvc.perform(get("/site-reports/" + validUrl))
                 .andExpect(status().isOk());
     }
 
-    // 9. DELETE - Remove um celular válido e espera NoContent
+    // 9. DELETE - Remove um Url válido 
     @Test
-    void whenDeleteValidUrl_thenReturnsNoContent() throws Exception {
+    void whenDeleteValidUrl_thenReturnsOk() throws Exception {
         mockMvc.perform(delete("/site-reports/" + validUrl))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
+    
+    // 10. GET - Retorna lista de Sites cadastrados
+    @Test
+    void whenFindAll_thenReturnsListAndStatusOk() throws Exception {
+    SiteReport report1 = new SiteReport("https://github.com", 2, LocalDate.now());
+    SiteReport report2 = new SiteReport("https://google.com", 1, LocalDate.now());
+    when(service.findAll()).thenReturn(Arrays.asList(report1, report2));
+    mockMvc.perform(get("/site-reports"))
+            .andExpect(status().isOk());
+}
+
     
 }

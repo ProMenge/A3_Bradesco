@@ -1,6 +1,7 @@
 package com.a3bradesco.api.services;
 
 import com.a3bradesco.api.entities.SiteReport;
+import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.repositories.SiteReportRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,69 +32,71 @@ class SiteReportServiceTest {
 }
     // 1. Salvar um Site que ainda não foi denunciado antes
     @Test
-    void whenNewSite_thenCreatesNewReport() {
-        String url = "https://github.com";
+void whenNewSite_thenCreatesNewReport() {
+    String site = "https://github.com";
 
-        // Simula que ainda não existe denúncia para esse número
-        doReturn(null).when(service).findById(url);
+    // Simula que ainda não existe denúncia para esse número
+    doReturn(Optional.empty()).when(service).findByIdOptional(site);
 
-        SiteReport newReport = new SiteReport(url, 1, LocalDate.now());
-        doReturn(newReport).when(service).insert(any(SiteReport.class));
+    SiteReport newReport = new SiteReport(site, 1, LocalDate.now());
+    doReturn(newReport).when(service).insert(any(SiteReport.class));
 
-        SiteReport result = service.saveNewReport(url);
+    SiteReport result = service.saveNewReport(site);
 
-        assertNotNull(result);
-        assertEquals(1, result.getReportQuantity());
-        verify(service).insert(any(SiteReport.class));
-    }
+    assertNotNull(result);
+    assertEquals(1, result.getReportQuantity());
+    verify(service).insert(any(SiteReport.class));
+}
+
     // 2. Quando já existe um registro, o serviço incrementa a contagem de denúncias.
     @Test
-    void whenExistingSite_thenIncrementsReport() {
-        String url = "https://github.com";
+void whenExistingSite_thenIncrementsReport() {
+    String site = "https://github.com";
 
-        SiteReport existing = new SiteReport(url, 2, LocalDate.now());
-        doReturn(existing).when(service).findById(url);
+    SiteReport existing = new SiteReport(site, 2, LocalDate.now());
+    doReturn(Optional.of(existing)).when(service).findByIdOptional(site);
 
-        SiteReport updated = new SiteReport(url, 3, LocalDate.now());
-        doReturn(updated).when(service).insert(any(SiteReport.class));
+    SiteReport updated = new SiteReport(site, 3, LocalDate.now());
+    doReturn(updated).when(service).insert(any(SiteReport.class));
 
-        SiteReport result = service.saveNewReport(url);
+    SiteReport result = service.saveNewReport(site);
 
-        assertEquals(3, result.getReportQuantity());
-        verify(service).insert(any(SiteReport.class));
-    }
+    assertEquals(3, result.getReportQuantity());
+    verify(service).insert(any(SiteReport.class));
+}
+
     // 3. Volta uma exceção quando tentar excluir uma denúncia inexistente.
     @Test
     void whenDeletingNonexistentSite_thenThrowsException() {
-    String url = "https://github.com";
+    String site = "https://github.com";
 
     // Simula que o método deleteReport lança EntityNotFoundException
-    doThrow(new EntityNotFoundException()).when(service).deleteReport(url);
+    doThrow(new EntityNotFoundException()).when(service).deleteReport(site);
 
     // Verifica se a exceção esperada é realmente lançada
-    assertThrows(EntityNotFoundException.class, () -> service.deleteReport(url));
+    assertThrows(EntityNotFoundException.class, () -> service.deleteReport(site));
 }
     // 4. Garantir que, se só há 1 denúncia, o serviço realmente exclui o registro do banco.
     @Test
     void whenDeletingSiteWithSingleReport_thenDeletes() {
-        String url = "https://github.com";
-        SiteReport existing = new SiteReport(url, 1, LocalDate.now());
+        String site = "https://github.com";
+        SiteReport existing = new SiteReport(site, 1, LocalDate.now());
 
-        doReturn(existing).when(service).findById(url);
+        doReturn(existing).when(service).findById(site);
 
-        service.deleteReport(url);
+        service.deleteReport(site);
 
-        verify(service).deleteById(url);
+        verify(service).deleteById(site);
     }
     // 5. ao deletar uma denúncia de um número com várias denúncias, o sistema apenas diminui em 1 
     @Test
     void whenDeletingSiteWithMultipleReports_thenDecrements() {
-        String url = "https://github.com";
-        SiteReport existing = new SiteReport(url, 3, LocalDate.now());
+        String site = "https://github.com";
+        SiteReport existing = new SiteReport(site, 3, LocalDate.now());
 
-        doReturn(existing).when(service).findById(url);
+        doReturn(existing).when(service).findById(site);
 
-        service.deleteReport(url);
+        service.deleteReport(site);
 
         ArgumentCaptor<SiteReport> captor = ArgumentCaptor.forClass(SiteReport.class);
         verify(service).insert(captor.capture());

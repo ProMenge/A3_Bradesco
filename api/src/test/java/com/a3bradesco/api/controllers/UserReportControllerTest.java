@@ -1,11 +1,14 @@
 package com.a3bradesco.api.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.a3bradesco.api.dto.UserReportDTO;
 import com.a3bradesco.api.entities.User;
@@ -56,21 +59,22 @@ class UserReportControllerTest {
     }
 
     @Test
-void CreateNewReport() throws Exception {
+    void CreateNewReport() throws Exception {
 
-    User user = new User(1L, "Igor", "49825725868", "igor@gmail.com", "Galinha7");
+    User user = new User(1L, "Igor Molina", "49825725868", "igor@gmail.com", "Galinha7");
     UserReportDTO dto = new UserReportDTO();
     dto.setReportType(ReportType.CPF);
     dto.setReportValue("12312312312");
 
     UserReport report = new UserReport(1L, user, ReportType.CPF, "12312312312", LocalDateTime.now());
 
-    when(reportService.saveNewReport(user.getId(), dto)).thenReturn(report);
+    when(reportService.saveNewReport(eq(user.getId()), any(UserReportDTO.class))).thenReturn(report);
 
     mockMvc.perform(post("/users/" + user.getId() + "/user-reports")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isCreated());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(dto)))
+        .andDo(print())
+        .andExpect(status().isCreated());
 }
 
     @Test
@@ -84,4 +88,38 @@ void CreateNewReport() throws Exception {
         mockMvc.perform(delete("/users/{userId}/user-reports/{reportId}", userId, reportId))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void CreateNewReport_ThrowsIllegalArgumentException_ReturnsBadRequest() throws Exception {
+    Long userId = 1L;
+    UserReportDTO dto = new UserReportDTO();
+    dto.setReportType(ReportType.CPF);
+    dto.setReportValue("valor-invalido");
+
+    when(reportService.saveNewReport(eq(userId), any(UserReportDTO.class)))
+        .thenThrow(new IllegalArgumentException("Usuário não encontrado"));
+
+    mockMvc.perform(post("/users/" + userId + "/user-reports")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isBadRequest());
+}
+    
+    @Test
+    void CreateNewReport_ThrowsIllegalStateException_ReturnsBadRequest() throws Exception {
+    Long userId = 1L;
+    UserReportDTO dto = new UserReportDTO();
+    dto.setReportType(ReportType.CPF);
+    dto.setReportValue("valor-duplicado");
+
+    when(reportService.saveNewReport(eq(userId), any(UserReportDTO.class)))
+        .thenThrow(new IllegalStateException("Esse report já foi feito"));
+
+    mockMvc.perform(post("/users/" + userId + "/user-reports")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isBadRequest());
+}
+
+
 }

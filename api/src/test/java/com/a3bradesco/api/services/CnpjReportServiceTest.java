@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,37 +31,39 @@ class CnpjReportServiceTest {
 }
     // 1. Salvar um Cnpj que ainda não foi denunciado antes
     @Test
-    void whenNewcnpj_thenCreatesNewReport() {
-        String cnpj = "12345678900123";
+void whenNewcnpj_thenCreatesNewReport() {
+    String cnpj = "12345678900123";
 
-        // Simula que ainda não existe denúncia para esse número
-        doReturn(null).when(service).findById(cnpj);
+    // Simula que ainda não existe denúncia para esse número
+    doReturn(Optional.empty()).when(service).findByIdOptional(cnpj);
 
-        CnpjReport newReport = new CnpjReport(cnpj, 1, LocalDate.now());
-        doReturn(newReport).when(service).insert(any(CnpjReport.class));
+    CnpjReport newReport = new CnpjReport(cnpj, 1, LocalDate.now());
+    doReturn(newReport).when(service).insert(any(CnpjReport.class));
 
-        CnpjReport result = service.saveNewReport(cnpj);
+    CnpjReport result = service.saveNewReport(cnpj);
 
-        assertNotNull(result);
-        assertEquals(1, result.getReportQuantity());
-        verify(service).insert(any(CnpjReport.class));
-    }
+    assertNotNull(result);
+    assertEquals(1, result.getReportQuantity());
+    verify(service).insert(any(CnpjReport.class));
+}
+
     // 2. Quando já existe um registro, o serviço incrementa a contagem de denúncias.
     @Test
-    void whenExistingcnpj_thenIncrementsReport() {
-        String cnpj = "12345678900123";
+void whenExistingcnpj_thenIncrementsReport() {
+    String cnpj = "12345678900123";
 
-        CnpjReport existing = new CnpjReport(cnpj, 2, LocalDate.now());
-        doReturn(existing).when(service).findById(cnpj);
+    CnpjReport existing = new CnpjReport(cnpj, 2, LocalDate.now());
+    doReturn(Optional.of(existing)).when(service).findByIdOptional(cnpj);
 
-        CnpjReport updated = new CnpjReport(cnpj, 3, LocalDate.now());
-        doReturn(updated).when(service).insert(any(CnpjReport.class));
+    CnpjReport updated = new CnpjReport(cnpj, 3, LocalDate.now());
+    doReturn(updated).when(service).insert(any(CnpjReport.class));
 
-        CnpjReport result = service.saveNewReport(cnpj);
+    CnpjReport result = service.saveNewReport(cnpj);
 
-        assertEquals(3, result.getReportQuantity());
-        verify(service).insert(any(CnpjReport.class));
-    }
+    assertEquals(3, result.getReportQuantity());
+    verify(service).insert(any(CnpjReport.class));
+}
+
     // 3. Volta uma exceção quando tentar excluir uma denúncia inexistente.
     @Test
     void whenDeletingNonexistentcnpj_thenThrowsException() {

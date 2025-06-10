@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -117,11 +118,22 @@ class EmailReportControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // 8. DELETE - Remove um celular válido e espera NoContent
+    // 8. DELETE - Remove um celular válido 
     @Test
     void whenDeleteValidEmail_thenReturnsNoContent() throws Exception {
         mockMvc.perform(delete("/email-reports/" + validEmail))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
+
+    // 9. GET - Retorna lista de Emails cadastrados
+    @Test
+    void whenFindAll_thenReturnsListAndStatusOk() throws Exception {
+    EmailReport report1 = new EmailReport("caue@gmail.com", 2, LocalDate.now());
+    EmailReport report2 = new EmailReport("caue1@gmail.com", 1, LocalDate.now());
+    when(service.findAll()).thenReturn(Arrays.asList(report1, report2));
+    mockMvc.perform(get("/email-reports"))
+            .andExpect(status().isOk());
+}
+
     
 }

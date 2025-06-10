@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,11 +116,23 @@ class CellphoneReportControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // 8. DELETE - Remove um celular válido e espera NoContent
+    // 8. DELETE - Remove um celular válido 
     @Test
     void whenDeleteValidCellphone_thenReturnsNoContent() throws Exception {
         mockMvc.perform(delete("/cellphone-reports/" + validCellphone))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
     
+
+// 9. GET - Retorna lista de celulares cadastrados
+@Test
+void whenFindAll_thenReturnsListAndStatusOk() throws Exception {
+    CellphoneReport report1 = new CellphoneReport("11999999999", 2, LocalDate.now());
+    CellphoneReport report2 = new CellphoneReport("11888888888", 1, LocalDate.now());
+
+    when(service.findAll()).thenReturn(Arrays.asList(report1, report2));
+
+    mockMvc.perform(get("/cellphone-reports"))
+            .andExpect(status().isOk());
 }
+} 

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,17 +25,18 @@ class CpfReportServiceTest {
 
     @BeforeEach
     void setup() {
-    MockitoAnnotations.openMocks(this);
-    service = spy(service); // spy obrigatório, já que você está mockando método da própria instância
-    doReturn(repository).when(service).getRepository(); // retorno certo
-}
+        MockitoAnnotations.openMocks(this);
+        service = spy(service); // spy obrigatório, já que você está mockando método da própria instância
+        doReturn(repository).when(service).getRepository(); // retorno certo
+    }
+
     // 1. Salva um Cpf que ainda não foi denunciado antes
     @Test
-    void whenNewCpf_thenCreatesNewReport() {
+    void whenNewcpf_thenCreatesNewReport() {
         String cpf = "12345678900";
 
         // Simula que ainda não existe denúncia para esse número
-        doReturn(null).when(service).findById(cpf);
+        doReturn(Optional.empty()).when(service).findByIdOptional(cpf);
 
         CpfReport newReport = new CpfReport(cpf, 1, LocalDate.now());
         doReturn(newReport).when(service).insert(any(CpfReport.class));
@@ -45,13 +47,15 @@ class CpfReportServiceTest {
         assertEquals(1, result.getReportQuantity());
         verify(service).insert(any(CpfReport.class));
     }
-    // 2. Quando já existe um registro, o serviço incrementa a contagem de denúncias.
+
+    // 2. Quando já existe um registro, o serviço incrementa a contagem de
+    // denúncias.
     @Test
-    void whenExistingCpf_thenIncrementsReport() {
-        String cpf = "12345678900";
+    void whenExistingcpf_thenIncrementsReport() {
+        String cpf = "12345678900123";
 
         CpfReport existing = new CpfReport(cpf, 2, LocalDate.now());
-        doReturn(existing).when(service).findById(cpf);
+        doReturn(Optional.of(existing)).when(service).findByIdOptional(cpf);
 
         CpfReport updated = new CpfReport(cpf, 3, LocalDate.now());
         doReturn(updated).when(service).insert(any(CpfReport.class));
@@ -61,18 +65,21 @@ class CpfReportServiceTest {
         assertEquals(3, result.getReportQuantity());
         verify(service).insert(any(CpfReport.class));
     }
+
     // 3. Volta uma exceção quando tentar excluir uma denúncia inexistente.
     @Test
     void whenDeletingNonexistentCpf_thenThrowsException() {
-    String cpf = "12345678900";
+        String cpf = "12345678900";
 
-    // Simula que o método deleteReport lança EntityNotFoundException
-    doThrow(new EntityNotFoundException()).when(service).deleteReport(cpf);
+        // Simula que o método deleteReport lança EntityNotFoundException
+        doThrow(new EntityNotFoundException()).when(service).deleteReport(cpf);
 
-    // Verifica se a exceção esperada é realmente lançada
-    assertThrows(EntityNotFoundException.class, () -> service.deleteReport(cpf));
-}
-    // 4. Garantir que, se só há 1 denúncia, o serviço realmente exclui o registro do banco.
+        // Verifica se a exceção esperada é realmente lançada
+        assertThrows(EntityNotFoundException.class, () -> service.deleteReport(cpf));
+    }
+
+    // 4. Garantir que, se só há 1 denúncia, o serviço realmente exclui o registro
+    // do banco.
     @Test
     void whenDeletingCpfWithSingleReport_thenDeletes() {
         String cpf = "12345678900";
@@ -84,7 +91,9 @@ class CpfReportServiceTest {
 
         verify(service).deleteById(cpf);
     }
-    // 5. ao deletar uma denúncia de um número com várias denúncias, o sistema apenas diminui em 1 
+
+    // 5. ao deletar uma denúncia de um número com várias denúncias, o sistema
+    // apenas diminui em 1
     @Test
     void whenDeletingCpfWithMultipleReports_thenDecrements() {
         String cpf = "12345678900";

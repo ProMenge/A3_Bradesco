@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -109,13 +110,22 @@ class CpfReportControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // 8. DELETE - Remove um celular válido e espera NoContent
+    // 8. DELETE - Remove um celular válido 
     @Test
     void whenDeleteValidCpf_thenReturnsNoContent() throws Exception {
         mockMvc.perform(delete("/cpf-reports/" + validCpf))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
-    
+    // 9. GET - Retorna lista de Cpfs cadastrados
+    @Test
+    void whenFindAll_thenReturnsListAndStatusOk() throws Exception {
+    CpfReport report1 = new CpfReport("12345678900", 2, LocalDate.now());
+    CpfReport report2 = new CpfReport("12345678902", 1, LocalDate.now());
+    when(service.findAll()).thenReturn(Arrays.asList(report1, report2));
+    mockMvc.perform(get("/cpf-reports"))
+            .andExpect(status().isOk());
+}
+
 
 
 

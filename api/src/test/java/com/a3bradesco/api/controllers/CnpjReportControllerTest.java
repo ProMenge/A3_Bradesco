@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
 
 import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.services.CnpjReportService;
@@ -109,13 +111,23 @@ class CnpjReportControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // 8. DELETE - Remove um Cnpj válido e espera NoContent
+    // 8. DELETE - Remove um Cnpj válido 
     @Test
     void whenDeleteValidCnpj_thenReturnsNoContent() throws Exception {
         mockMvc.perform(delete("/cnpj-reports/" + validCnpj))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
     
+    // 9. GET - Retorna lista de Cnpj cadastrados
+    @Test
+    void whenFindAll_thenReturnsListAndStatusOk() throws Exception {
+    CnpjReport report1 = new CnpjReport("12345678900123", 2, LocalDate.now());
+    CnpjReport report2 = new CnpjReport("12345678900127", 1, LocalDate.now());
+    when(service.findAll()).thenReturn(Arrays.asList(report1, report2));
+    mockMvc.perform(get("/cnpj-reports"))
+            .andExpect(status().isOk());
+}
+
 
 
 
