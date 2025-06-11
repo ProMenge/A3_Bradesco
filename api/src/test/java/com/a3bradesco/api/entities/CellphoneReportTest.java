@@ -37,7 +37,8 @@ class CellphoneReportTest {
         LocalDate date = LocalDate.now();
 
         CellphoneReport report1 = new CellphoneReport("11999999999", 1, date);
-        CellphoneReport report2 = new CellphoneReport("11999999999", 2, date); // reportQuantity diferente, mas cellphone igual
+        CellphoneReport report2 = new CellphoneReport("11999999999", 2, date); // reportQuantity diferente, mas
+                                                                               // cellphone igual
         CellphoneReport report3 = new CellphoneReport("11888888888", 1, date);
 
         assertEquals(report1, report2); // mesmo cellphone

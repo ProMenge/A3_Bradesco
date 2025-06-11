@@ -114,10 +114,13 @@ public class UserControllerTest {
     }
 
     @Test
-    void DeleteUserFailure() throws Exception {
-        doThrow(new RuntimeException("Erro ao deletar usuário")).when(userService).deleteUser(1L);
+    void CreateNewUser_InvalidData() throws Exception {
+        UserDTO dto = new UserDTO(); // vazio
 
-        mockMvc.perform(delete("/users/1"))
-                .andExpect(status().isInternalServerError()); // 500 pois não há tratamento no controller
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
     }
+
 }

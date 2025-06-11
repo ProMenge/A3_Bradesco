@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,13 +27,14 @@ class CellphoneReportServiceTest {
         MockitoAnnotations.openMocks(this);
         service = spy(service); // necessário para mockar métodos herdados como `findById` e `insert`
     }
+
     // 1. Salvar um número de celular que ainda não foi denunciado antes
     @Test
     void whenNewCellphone_thenCreatesNewReport() {
         String cellphone = "11992067482";
 
-        // Simula que ainda não existe denúncia para esse número
-        doReturn(null).when(service).findById(cellphone);
+        // Corrigido para Optional.empty()
+        doReturn(Optional.empty()).when(service).findByIdOptional(cellphone);
 
         CellphoneReport newReport = new CellphoneReport(cellphone, 1, LocalDate.now());
         doReturn(newReport).when(service).insert(any(CellphoneReport.class));
@@ -43,13 +45,16 @@ class CellphoneReportServiceTest {
         assertEquals(1, result.getReportQuantity());
         verify(service).insert(any(CellphoneReport.class));
     }
-    // 2. Quando já existe um registro, o serviço incrementa a contagem de denúncias.
+
+    // 2. Quando já existe um registro, o serviço incrementa a contagem de
+    // denúncias.
     @Test
     void whenExistingCellphone_thenIncrementsReport() {
         String cellphone = "11992067482";
 
         CellphoneReport existing = new CellphoneReport(cellphone, 2, LocalDate.now());
-        doReturn(existing).when(service).findById(cellphone);
+
+        doReturn(Optional.of(existing)).when(service).findByIdOptional(cellphone);
 
         CellphoneReport updated = new CellphoneReport(cellphone, 3, LocalDate.now());
         doReturn(updated).when(service).insert(any(CellphoneReport.class));
@@ -59,18 +64,21 @@ class CellphoneReportServiceTest {
         assertEquals(3, result.getReportQuantity());
         verify(service).insert(any(CellphoneReport.class));
     }
+
     // 3. Volta uma exceção quando tentar excluir uma denúncia inexistente.
     @Test
     void whenDeletingNonexistentCellphone_thenThrowsException() {
-    String cellphone = "11992067482";
+        String cellphone = "11992067482";
 
-    // Simula que o método deleteReport lança EntityNotFoundException
-    doThrow(new EntityNotFoundException()).when(service).deleteReport(cellphone);
+        // Simula que o método deleteReport lança EntityNotFoundException
+        doThrow(new EntityNotFoundException()).when(service).deleteReport(cellphone);
 
-    // Verifica se a exceção esperada é realmente lançada
-    assertThrows(EntityNotFoundException.class, () -> service.deleteReport(cellphone));
-}
-    // 4. Garantir que, se só há 1 denúncia, o serviço realmente exclui o registro do banco.
+        // Verifica se a exceção esperada é realmente lançada
+        assertThrows(EntityNotFoundException.class, () -> service.deleteReport(cellphone));
+    }
+
+    // 4. Garantir que, se só há 1 denúncia, o serviço realmente exclui o registro
+    // do banco.
     @Test
     void whenDeletingCellphoneWithSingleReport_thenDeletes() {
         String cellphone = "11992067482";
@@ -82,7 +90,9 @@ class CellphoneReportServiceTest {
 
         verify(service).deleteById(cellphone);
     }
-    // 5. ao deletar uma denúncia de um número com várias denúncias, o sistema apenas diminui em 1 
+
+    // 5. ao deletar uma denúncia com mais de 2 denúncias , o sistema retira 1
+
     @Test
     void whenDeletingCellphoneWithMultipleReports_thenDecrements() {
         String cellphone = "11992067482";

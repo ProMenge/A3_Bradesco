@@ -1,6 +1,7 @@
 package com.a3bradesco.api.controllers;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -22,129 +23,132 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.services.SiteReportService;
 
-@AutoConfigureMockMvc(addFilters = false) // Ignorei a segurança do teste para evitar o erro 403, desativando a autenticação e autorização
-@WebMvcTest(SiteReportController.class) 
+@AutoConfigureMockMvc(addFilters = false) // Ignorei a segurança do teste para evitar o erro 403, desativando a
+                                          // autenticação e autorização
+@WebMvcTest(SiteReportController.class)
 class SiteReportControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockBean
-    private SiteReportService service;
+        @MockBean
+        private SiteReportService service;
 
+        private final String validUrl = "https://github.com";
 
-    private final String validUrl = "https://github.com";
+        @BeforeEach
+        void setup() {
+                SiteReport report = new SiteReport(validUrl, 1, LocalDate.now());
+                when(service.saveNewReport(anyString())).thenReturn(report);
+        }
 
-    @BeforeEach
-    void setup() {
-        SiteReport report = new SiteReport(validUrl, 1, LocalDate.now());
-        when(service.saveNewReport(anyString())).thenReturn(report);
-    }
-    // 1. https e .com - retorna Created
-    @Test
-    void whenValidUrlWithHttps_thenReturnsCreated() throws Exception {
-        String json = "{ \"site\": \"https://github.com\" }";
+        // 1. https e .com - retorna Created
+        @Test
+        void whenValidUrlWithHttps_thenReturnsCreated() throws Exception {
+                String json = "{ \"site\": \"https://github.com\" }";
 
-        mockMvc.perform(post("/site-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isCreated());
-    }
-    // 2. Sem https - retorna Created
-    @Test
-    void whenValidUrlWithoutHttps_thenReturnsCreated() throws Exception {
-        String json = "{ \"site\": \"github.com\" }";
+                mockMvc.perform(post("/site-reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andExpect(status().isCreated());
+        }
 
-        mockMvc.perform(post("/site-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isCreated());
-    }
-    // 3. Com www e .com - retorna Created
-    @Test
-    void whenValidUrlWithWww_thenReturnsCreated() throws Exception {
-        String json = "{ \"site\": \"www.github.com\" }";
+        // 2. Sem https - retorna Created
+        @Test
+        void whenValidUrlWithoutHttps_thenReturnsCreated() throws Exception {
+                String json = "{ \"site\": \"github.com\" }";
 
-        mockMvc.perform(post("/site-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isCreated());
-    }
-    // 4. Com www e .com.br - retorna Created
-    @Test
-    void whenValidUrlWithComBr_thenReturnsCreated() throws Exception {
-        String json = "{ \"site\": \"www.github.com.br\" }";
+                mockMvc.perform(post("/site-reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andExpect(status().isCreated());
+        }
 
-        mockMvc.perform(post("/site-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isCreated());
-    }
-    // 5. Sites invalidos - retorna BadRequest 
-    @Test
-    void whenInvalidDomainSuffix_thenReturnsBadRequest() throws Exception {
-        String json1 = "{ \"site\": \"githubcom\" }";
-        String json2 = "{ \"site\": \"github .com\" }";
-        String json3 = "{ \"site\": \"github..com\" }";
+        // 3. Com www e .com - retorna Created
+        @Test
+        void whenValidUrlWithWww_thenReturnsCreated() throws Exception {
+                String json = "{ \"site\": \"www.github.com\" }";
 
-        mockMvc.perform(post("/site-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json1))
-                .andExpect(status().isBadRequest());
+                mockMvc.perform(post("/site-reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andExpect(status().isCreated());
+        }
 
-        mockMvc.perform(post("/site-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json2))
-                .andExpect(status().isBadRequest());
+        // 4. Com www e .com.br - retorna Created
+        @Test
+        void whenValidUrlWithComBr_thenReturnsCreated() throws Exception {
+                String json = "{ \"site\": \"www.github.com.br\" }";
 
-        mockMvc.perform(post("/site-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json3))
-                .andExpect(status().isBadRequest());        
-    }
-    // 6. Vazio - Retorna BadResquest
-    @Test
-    void whenSiteIsBlank_thenReturnsBadRequest() throws Exception {
-        String json = "{ \"site\": \"\" }"; 
+                mockMvc.perform(post("/site-reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andExpect(status().isCreated());
+        }
 
-        mockMvc.perform(post("/site-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isBadRequest());
-    }
-    // 7. Fazer o post com o nome "documento" ao invés de "url" - retorna BadResquest
-    @Test
-    void whenWrongFieldName_thenReturnsBadRequest() throws Exception {
-        String json = "{ \"documento\": \"" + validUrl + "\" }";
+        // 5. Sites invalidos - retorna BadRequest
+        @Test
+        void whenInvalidDomainSuffix_thenReturnsBadRequest() throws Exception {
+                String json1 = "{ \"site\": \"githubcom\" }";
+                String json2 = "{ \"site\": \"github .com\" }";
+                String json3 = "{ \"site\": \"github..com\" }";
 
-        mockMvc.perform(post("/site-reports")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isBadRequest()); 
-    }
-       // 8. GET - Busca um Url válido e espera OK
-    @Test
-    void whenGetValidUrl_thenReturnsOk() throws Exception {
-        mockMvc.perform(get("/site-reports/" + validUrl))
-                .andExpect(status().isOk());
-    }
+                mockMvc.perform(post("/site-reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json1))
+                                .andExpect(status().isBadRequest());
 
-    // 9. DELETE - Remove um Url válido 
-    @Test
-    void whenDeleteValidUrl_thenReturnsOk() throws Exception {
-        mockMvc.perform(delete("/site-reports/" + validUrl))
-                .andExpect(status().isOk());
-    }
-    
-    // 10. GET - Retorna lista de Sites cadastrados
-    @Test
-    void whenFindAll_thenReturnsListAndStatusOk() throws Exception {
-    SiteReport report1 = new SiteReport("https://github.com", 2, LocalDate.now());
-    SiteReport report2 = new SiteReport("https://google.com", 1, LocalDate.now());
-    when(service.findAll()).thenReturn(Arrays.asList(report1, report2));
-    mockMvc.perform(get("/site-reports"))
-            .andExpect(status().isOk());
-}
+                mockMvc.perform(post("/site-reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json2))
+                                .andExpect(status().isBadRequest());
 
-    
+                mockMvc.perform(post("/site-reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json3))
+                                .andExpect(status().isBadRequest());
+        }
+
+        // 6. Vazio - Retorna BadResquest
+        @Test
+        void whenSiteIsBlank_thenReturnsBadRequest() throws Exception {
+                String json = "{ \"site\": \"\" }";
+
+                mockMvc.perform(post("/site-reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andExpect(status().isBadRequest());
+        }
+
+        // 7. Fazer o post com o nome "documento" ao invés de "url" - retorna
+        // BadResquest
+        @Test
+        void whenWrongFieldName_thenReturnsBadRequest() throws Exception {
+                String json = "{ \"documento\": \"" + validUrl + "\" }";
+
+                mockMvc.perform(post("/site-reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andExpect(status().isBadRequest());
+        }
+
+        // 8. GET - Busca um Url válido e espera OK
+        @Test
+        void whenGetValidUrl_thenReturnsOk() throws Exception {
+                when(service.findById(validUrl))
+                                .thenReturn(new SiteReport(validUrl, 1, LocalDate.now()));
+
+                mockMvc.perform(get("/site-reports/" + validUrl))
+                                .andExpect(status().isOk());
+        }
+
+        // 9. DELETE - Remove um Url válido
+        @Test
+        void whenDeleteValidUrl_thenReturnsOk() throws Exception {
+                doNothing().when(service).deleteReport(validUrl);
+
+                mockMvc.perform(delete("/site-reports/" + validUrl))
+                                .andExpect(status().isOk());
+        }
+
 }

@@ -25,57 +25,61 @@ class CnpjReportServiceTest {
 
     @BeforeEach
     void setup() {
-    MockitoAnnotations.openMocks(this);
-    service = spy(service); // spy obrigatório, já que você está mockando método da própria instância
-    doReturn(repository).when(service).getRepository(); // retorno certo
-}
+        MockitoAnnotations.openMocks(this);
+        service = spy(service); // spy obrigatório, já que você está mockando método da própria instância
+        doReturn(repository).when(service).getRepository(); // retorno certo
+    }
+
     // 1. Salvar um Cnpj que ainda não foi denunciado antes
     @Test
-void whenNewcnpj_thenCreatesNewReport() {
-    String cnpj = "12345678900123";
+    void whenNewcnpj_thenCreatesNewReport() {
+        String cnpj = "12345678900123";
 
-    // Simula que ainda não existe denúncia para esse número
-    doReturn(Optional.empty()).when(service).findByIdOptional(cnpj);
+        // Simula que ainda não existe denúncia para esse número
+        doReturn(Optional.empty()).when(service).findByIdOptional(cnpj);
 
-    CnpjReport newReport = new CnpjReport(cnpj, 1, LocalDate.now());
-    doReturn(newReport).when(service).insert(any(CnpjReport.class));
+        CnpjReport newReport = new CnpjReport(cnpj, 1, LocalDate.now());
+        doReturn(newReport).when(service).insert(any(CnpjReport.class));
 
-    CnpjReport result = service.saveNewReport(cnpj);
+        CnpjReport result = service.saveNewReport(cnpj);
 
-    assertNotNull(result);
-    assertEquals(1, result.getReportQuantity());
-    verify(service).insert(any(CnpjReport.class));
-}
+        assertNotNull(result);
+        assertEquals(1, result.getReportQuantity());
+        verify(service).insert(any(CnpjReport.class));
+    }
 
-    // 2. Quando já existe um registro, o serviço incrementa a contagem de denúncias.
+    // 2. Quando já existe um registro, o serviço incrementa a contagem de
+    // denúncias.
     @Test
-void whenExistingcnpj_thenIncrementsReport() {
-    String cnpj = "12345678900123";
+    void whenExistingcnpj_thenIncrementsReport() {
+        String cnpj = "12345678900123";
 
-    CnpjReport existing = new CnpjReport(cnpj, 2, LocalDate.now());
-    doReturn(Optional.of(existing)).when(service).findByIdOptional(cnpj);
+        CnpjReport existing = new CnpjReport(cnpj, 2, LocalDate.now());
+        doReturn(Optional.of(existing)).when(service).findByIdOptional(cnpj);
 
-    CnpjReport updated = new CnpjReport(cnpj, 3, LocalDate.now());
-    doReturn(updated).when(service).insert(any(CnpjReport.class));
+        CnpjReport updated = new CnpjReport(cnpj, 3, LocalDate.now());
+        doReturn(updated).when(service).insert(any(CnpjReport.class));
 
-    CnpjReport result = service.saveNewReport(cnpj);
+        CnpjReport result = service.saveNewReport(cnpj);
 
-    assertEquals(3, result.getReportQuantity());
-    verify(service).insert(any(CnpjReport.class));
-}
+        assertEquals(3, result.getReportQuantity());
+        verify(service).insert(any(CnpjReport.class));
+    }
 
     // 3. Volta uma exceção quando tentar excluir uma denúncia inexistente.
     @Test
     void whenDeletingNonexistentcnpj_thenThrowsException() {
-    String cnpj = "12345678900123";
+        String cnpj = "12345678900123";
 
-    // Simula que o método deleteReport lança EntityNotFoundException
-    doThrow(new EntityNotFoundException()).when(service).deleteReport(cnpj);
+        // Simula que o método deleteReport lança EntityNotFoundException
+        doThrow(new EntityNotFoundException()).when(service).deleteReport(cnpj);
 
-    // Verifica se a exceção esperada é realmente lançada
-    assertThrows(EntityNotFoundException.class, () -> service.deleteReport(cnpj));
-}
-    // 4. Garantir que, se só há 1 denúncia, o serviço realmente exclui o registro do banco.
+        // Verifica se a exceção esperada é realmente lançada
+        assertThrows(EntityNotFoundException.class, () -> service.deleteReport(cnpj));
+    }
+
+    // 4. Garantir que, se só há 1 denúncia, o serviço realmente exclui o registro
+    // do banco.
     @Test
     void whenDeletingcnpjWithSingleReport_thenDeletes() {
         String cnpj = "12345678900123";
@@ -87,7 +91,9 @@ void whenExistingcnpj_thenIncrementsReport() {
 
         verify(service).deleteById(cnpj);
     }
-    // 5. Ao deletar uma denúncia de um número com várias denúncias, o sistema apenas diminui em 1 
+
+    // 5. Ao deletar uma denúncia de um número com várias denúncias, o sistema
+    // apenas diminui em 1
     @Test
     void whenDeletingcnpjWithMultipleReports_thenDecrements() {
         String cnpj = "12345678900123";

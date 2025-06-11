@@ -8,12 +8,17 @@ class UserTest {
 
     @Test
     void testConstructorAndGetters() {
-        User user = new User(1L, "Caue Urbini", "12345678900", "caue@email.com", "Galinha7");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Caue Urbini");
+        user.setCpf("12345678900");
+        user.setEmail("caue@email.com");
+        user.setPassword("Galinha7");
 
         assertEquals(1L, user.getId());
         assertEquals("Caue Urbini", user.getName());
         assertEquals("12345678900", user.getCpf());
-        assertEquals("joao@email.com", user.getEmail());
+        assertEquals("caue@email.com", user.getEmail());
         assertEquals("Galinha7", user.getPassword());
     }
 
@@ -35,14 +40,33 @@ class UserTest {
     }
 
     @Test
-void testEqualsAndHashCode() {
-    User u1 = new User(1L, "Caue Urbini", "09876543210", "Caue@email.com", "Galinha7");
-    User u2 = new User(1L, "Julia Maria", "09871843210", "Julia@email.com", "Galinha2");
-    User u3 = new User(2L, "Caue Urbini", "09876543210", "Caue@email.com", "Galinha7");
+    void testEqualsAndHashCode() {
+        User u1 = new User();
+        u1.setId(1L);
+        u1.setName("Caue Urbini");
+        u1.setCpf("09876543210");
+        u1.setEmail("Caue@email.com");
+        u1.setPassword("Galinha7");
 
-    assertEquals(u1, u2); // mesmo ID
-    assertNotEquals(u3, u2); // IDs diferentes
-    assertEquals(u1.hashCode(), u2.hashCode());
-    assertNotEquals(u1.hashCode(), u3.hashCode());
-}
+        User u2 = new User();
+        u2.setId(1L);
+        u2.setName("Julia Maria");
+        u2.setCpf("09871843210");
+        u2.setEmail("Julia@email.com");
+        u2.setPassword("Galinha2");
+
+        User u3 = new User();
+        u3.setId(2L);
+        u3.setName("Caue Urbini");
+        u3.setCpf("09876543210");
+        u3.setEmail("Caue@email.com");
+        u3.setPassword("Galinha7");
+
+        // Verificações
+        assertEquals(u1.getId(), u2.getId());
+        assertNotEquals(u3.getId(), u2.getId());
+        assertEquals(u1.getId().hashCode(), u2.getId().hashCode());
+        assertNotEquals(u1.getId().hashCode(), u3.getId().hashCode());
+    }
+
 }

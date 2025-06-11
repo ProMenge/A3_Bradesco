@@ -29,7 +29,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-@AutoConfigureMockMvc(addFilters = false) // Ignorei a segurança do teste para evitar o erro 403, desativando a autenticação e autorização 
+@AutoConfigureMockMvc(addFilters = false) // Ignorei a segurança do teste para evitar o erro 403, desativando a
+                                          // autenticação e autorização
 @WebMvcTest(UserReportController.class)
 class UserReportControllerTest {
 
@@ -61,21 +62,23 @@ class UserReportControllerTest {
     @Test
     void CreateNewReport() throws Exception {
 
-    User user = new User(1L, "Igor Molina", "49825725868", "igor@gmail.com", "Galinha7");
-    UserReportDTO dto = new UserReportDTO();
-    dto.setReportType(ReportType.CPF);
-    dto.setReportValue("12312312312");
+        Long userId = 1L;
+        User user = new User(userId, "Igor Molina", "49825725868", "igor@gmail.com", "Galinha7");
 
-    UserReport report = new UserReport(1L, user, ReportType.CPF, "12312312312", LocalDateTime.now());
+        UserReportDTO dto = new UserReportDTO();
+        dto.setReportType(ReportType.CPF);
+        dto.setReportValue("49724125685");
 
-    when(reportService.saveNewReport(eq(user.getId()), any(UserReportDTO.class))).thenReturn(report);
+        UserReport report = new UserReport(1L, user, ReportType.CPF, "49724125685", LocalDateTime.now());
+        when(reportService.saveNewReport(eq(userId), any(UserReportDTO.class))).thenReturn(report);
 
-    mockMvc.perform(post("/users/" + user.getId() + "/user-reports")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(dto)))
-        .andDo(print())
-        .andExpect(status().isCreated());
-}
+        // Executa o teste
+        mockMvc.perform(post("/users/" + userId + "/user-reports")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(status().isCreated());
+    }
 
     @Test
     void DeleteReport() throws Exception {
@@ -91,35 +94,34 @@ class UserReportControllerTest {
 
     @Test
     void CreateNewReport_ThrowsIllegalArgumentException_ReturnsBadRequest() throws Exception {
-    Long userId = 1L;
-    UserReportDTO dto = new UserReportDTO();
-    dto.setReportType(ReportType.CPF);
-    dto.setReportValue("valor-invalido");
+        Long userId = 1L;
+        UserReportDTO dto = new UserReportDTO();
+        dto.setReportType(ReportType.CPF);
+        dto.setReportValue("valor-invalido");
 
-    when(reportService.saveNewReport(eq(userId), any(UserReportDTO.class)))
-        .thenThrow(new IllegalArgumentException("Usuário não encontrado"));
+        when(reportService.saveNewReport(eq(userId), any(UserReportDTO.class)))
+                .thenThrow(new IllegalArgumentException("Usuário não encontrado"));
 
-    mockMvc.perform(post("/users/" + userId + "/user-reports")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(dto)))
-        .andExpect(status().isBadRequest());
-}
-    
+        mockMvc.perform(post("/users/" + userId + "/user-reports")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+    }
+
     @Test
     void CreateNewReport_ThrowsIllegalStateException_ReturnsBadRequest() throws Exception {
-    Long userId = 1L;
-    UserReportDTO dto = new UserReportDTO();
-    dto.setReportType(ReportType.CPF);
-    dto.setReportValue("valor-duplicado");
+        Long userId = 1L;
+        UserReportDTO dto = new UserReportDTO();
+        dto.setReportType(ReportType.CPF);
+        dto.setReportValue("valor-duplicado");
 
-    when(reportService.saveNewReport(eq(userId), any(UserReportDTO.class)))
-        .thenThrow(new IllegalStateException("Esse report já foi feito"));
+        when(reportService.saveNewReport(eq(userId), any(UserReportDTO.class)))
+                .thenThrow(new IllegalStateException("Esse report já foi feito"));
 
-    mockMvc.perform(post("/users/" + userId + "/user-reports")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(dto)))
-        .andExpect(status().isBadRequest());
-}
-
+        mockMvc.perform(post("/users/" + userId + "/user-reports")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+    }
 
 }
