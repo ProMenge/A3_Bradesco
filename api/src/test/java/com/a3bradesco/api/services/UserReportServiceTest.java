@@ -43,7 +43,7 @@ class UserReportServiceTest {
     void saveNewReport_ShouldSaveReport_WhenValidEmailReport() {
         // Arrange
         Long userId = 1L;
-        String validEmail = "example@email.com";
+        String validEmail = "caue@email.com";
         UserReportDTO dto = new UserReportDTO();
         dto.setReportType(ReportType.EMAIL);
         dto.setReportValue(validEmail);
@@ -127,7 +127,7 @@ class UserReportServiceTest {
 
         UserReportDTO dto = new UserReportDTO();
         dto.setReportType(ReportType.EMAIL);
-        dto.setReportValue("new@email.com");
+        dto.setReportValue("caue@email.com");
 
         when(userService.findById(userId)).thenReturn(user);
         when(userReportRepository.findByReporter(user)).thenReturn(reports);

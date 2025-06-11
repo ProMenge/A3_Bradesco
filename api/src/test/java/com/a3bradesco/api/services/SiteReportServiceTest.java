@@ -1,7 +1,6 @@
 package com.a3bradesco.api.services;
 
 import com.a3bradesco.api.entities.SiteReport;
-import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.repositories.SiteReportRepository;
 
 import jakarta.persistence.EntityNotFoundException;

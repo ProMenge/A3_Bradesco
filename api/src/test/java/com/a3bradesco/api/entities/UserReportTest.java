@@ -11,7 +11,7 @@ class UserReportTest {
 
     @Test
     void testConstructorAndGetters() {
-        User user = new User(1L, "Carlos", "11122233344", "carlos@email.com", "senha");
+        User user = new User(1L, "Caue Urbini", "11122233344", "Caue@email.com", "Galinha7");
         LocalDateTime now = LocalDateTime.now().withNano(0);
         UserReport report = new UserReport(1L, user, ReportType.EMAIL, "spam@email.com", now);
 
@@ -25,29 +25,29 @@ class UserReportTest {
     @Test
     void testSetters() {
         UserReport report = new UserReport();
-        User user = new User(2L, "Joana", "99988877766", "joana@email.com", "1234");
+        User user = new User(2L, "Caue Urbini", "99988877766", " caue@email.com", "Galinha7");
         LocalDateTime dateTime = LocalDateTime.of(2025, 6, 10, 10, 30).withNano(0);
 
         report.setId(2L);
         report.setReporter(user);
         report.setReportType(ReportType.SITE);
-        report.setReportValue("phishingsite.com");
+        report.setReportValue("google.com");
         report.setReportMoment(dateTime);
 
         assertEquals(2L, report.getId());
         assertEquals(user, report.getReporter());
         assertEquals(ReportType.SITE, report.getReportType());
-        assertEquals("phishingsite.com", report.getReportValue());
+        assertEquals("google.com", report.getReportValue());
         assertEquals(dateTime, report.getReportMoment());
     }
 
     @Test
     void testEqualsAndHashCode() {
-        User user = new User(1L, "Carlos", "11122233344", "carlos@email.com", "senha");
+        User user = new User(1L, "Caue Urbini", "11122233344", "Caue@email.com", "Galinha7");
 
         UserReport r1 = new UserReport(null, user, ReportType.CPF, "12345678900", LocalDateTime.now());
         UserReport r2 = new UserReport(null, user, ReportType.CPF, "12345678900", LocalDateTime.now());
-        UserReport r3 = new UserReport(null, user, ReportType.EMAIL, "outro@email.com", LocalDateTime.now());
+        UserReport r3 = new UserReport(null, user, ReportType.EMAIL, "caue@email.com", LocalDateTime.now());
 
         assertEquals(r1, r2);
         assertNotEquals(r1, r3);
