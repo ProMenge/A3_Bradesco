@@ -4,10 +4,6 @@ interface BadgeProps {
   type: string;
 }
 
-interface NavProps {
-  open: boolean;
-}
-
 interface ActionButtonProps {
   delete?: boolean;
 }

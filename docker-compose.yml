@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  api:
+    build: ./api
+    container_name: api-service
+    ports:
+      - "8080:8080"
+
+  chat:
+    build: ./chat
+    container_name: chat-service
+    ports:
+      - "8081:8080" # externo:interno
+
+  frontend:
+    build: ./frontend
+    container_name: frontend-app
+    ports:
+      - "5173:3000"
+    depends_on:
+      - api
