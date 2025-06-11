@@ -21,6 +21,21 @@ public class UserReportService {
     UserReportRepository userReportRepository;
 
     @Autowired
+    CpfReportService cpfReportService;
+
+    @Autowired
+    CnpjReportService cnpjReportService;
+
+    @Autowired
+    CellphoneReportService cellphoneReportService;
+
+    @Autowired
+    EmailReportService emailReportService;
+
+    @Autowired
+    SiteReportService siteReportService;
+
+    @Autowired
     UserService userService;
 
     public List<UserReport> findByReporter(User reporter) {
@@ -53,7 +68,7 @@ public class UserReportService {
 
         switch (reportDTO.getReportType()) {
             case CELLPHONE:
-                isDtoValid = reportDTO.getReportValue().matches("\\d{10,11}");
+                isDtoValid = reportDTO.getReportValue().matches("\\d{11}");
                 break;
             case CNPJ:
                 isDtoValid = reportDTO.getReportValue().matches("\\d{14}");
@@ -95,11 +110,48 @@ public class UserReportService {
                 reportDTO.getReportValue(),
                 LocalDateTime.now());
 
+        switch (reportDTO.getReportType()) {
+            case CPF:
+                cpfReportService.saveNewReport(reportDTO.getReportValue());
+                break;
+            case CNPJ:
+                cnpjReportService.saveNewReport(reportDTO.getReportValue());
+                break;
+            case CELLPHONE:
+                cellphoneReportService.saveNewReport(reportDTO.getReportValue());
+                break;
+            case EMAIL:
+                emailReportService.saveNewReport(reportDTO.getReportValue());
+                break;
+            case SITE:
+                siteReportService.saveNewReport(reportDTO.getReportValue());
+                break;
+        }
+
         return insert(report);
     }
 
     public void deleteReport(Long reportId) {
-        findById(reportId);
+        UserReport reportToDelete = findById(reportId);
+
+        switch (reportToDelete.getReportType()) {
+            case CPF:
+                cpfReportService.deleteReport(reportToDelete.getReportValue());
+                break;
+            case CNPJ:
+                cnpjReportService.deleteReport(reportToDelete.getReportValue());
+                break;
+            case CELLPHONE:
+                cellphoneReportService.deleteReport(reportToDelete.getReportValue());
+                break;
+            case EMAIL:
+                emailReportService.deleteReport(reportToDelete.getReportValue());
+                break;
+            case SITE:
+                siteReportService.deleteReport(reportToDelete.getReportValue());
+                break;
+        }
+
         deleteById(reportId);
     }
 }
