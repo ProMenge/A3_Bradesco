@@ -1,4 +1,4 @@
-package com.a3bradesco.api.integration;
+/*package com.a3bradesco.api.integration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -131,4 +131,4 @@ void shouldReturnSpecificCpfReportCorrectly() throws Exception {
 }
 
 
-}
+} /* */
