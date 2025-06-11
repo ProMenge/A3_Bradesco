@@ -3,10 +3,11 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Rotas from "./routes";
 import { GlobalCss } from "./styles";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <BrowserRouter>
         <GlobalCss />
         <Rotas />
@@ -18,7 +19,7 @@ function App() {
           theme="light"
         />
       </BrowserRouter>
-    </>
+    </AuthProvider>
   );
 }
 

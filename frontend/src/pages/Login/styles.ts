@@ -4,8 +4,9 @@ interface ImageContainerProps {
 }
 export const LoginWrapper = styled.div`
   display: flex;
-  height: 100vh;
+  height: 130vh;
   width: 100vw;
+
 `;
 
 export const FormContainer = styled.div`
@@ -15,12 +16,14 @@ export const FormContainer = styled.div`
   justify-content: center;
   background-color: #f5f5f5;
 
+
   form {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+
     width: 100%;
     max-width: 400px;
+    padding-top: 10vh;
   }
 
   h1 {
@@ -68,13 +71,13 @@ export const FormContainer = styled.div`
   }
 
   input {
-    margin-bottom: 26px;
+    margin-bottom: 20px;
   }
 
   .divider {
     position: relative;
     text-align: center;
-    margin: 2rem 0;
+    margin: 1rem 0;
 
     hr {
       border: none;
@@ -87,7 +90,7 @@ export const FormContainer = styled.div`
       top: 50%;
       left: 50%;
       background-color: #f5f5f5;
-      padding: 0 1rem;
+      padding: 0 -2.3rem;
       transform: translate(-50%, -50%);
       font-size: 0.9rem;
       color: #666;
