@@ -4,8 +4,7 @@ import { toast } from "react-toastify"; // Certifique-se de que toast está impo
 import * as Yup from "yup";
 import { useAuth } from "../../hooks/useAuth";
 import {
-  createReport,
-  saveToSpecificReportTable,
+  createReport
 } from "../../services/reportService";
 import { ReportType, ReportTypeLabel } from "../../utils/enums/ReportType";
 import { formatValue } from "../../utils/format";
@@ -97,8 +96,6 @@ export const Modal = ({ onClose, onAdd }: ModalProps) => {
         reportType: selectedType,
         reportValue: cleanValue,
       });
-
-      await saveToSpecificReportTable(selectedType, cleanValue);
 
       const reportTypeCode = ReportType[selectedType];
 

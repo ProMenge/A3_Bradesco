@@ -11,15 +11,10 @@ import {
 } from "../../components/ReportList/ReportList";
 import { useAuth } from "../../hooks/useAuth";
 import {
-  deleteFromSpecificReportTable,
   deleteReport,
   getUserReports,
 } from "../../services/reportService";
 
-import {
-  ReportTypeLabelFromCode,
-  type ReportTypeValue,
-} from "../../utils/enums/ReportType";
 import * as S from "./styles";
 
 export const Dashboard = () => {
@@ -29,19 +24,11 @@ export const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleDelete = async (
-    id: number,
-    type: ReportTypeValue,
-    rawValue: string,
-  ) => {
+  const handleDelete = async (id: number,) => {
     try {
       if (!user) return;
 
       await deleteReport(user.id, id);
-      await deleteFromSpecificReportTable(
-        ReportTypeLabelFromCode[type],
-        rawValue,
-      );
 
       setReports((prev) => prev.filter((r) => r.id !== id));
       toast.success("Denúncia removida com sucesso!");
