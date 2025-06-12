@@ -9,9 +9,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.a3bradesco.api.config.security.CustomUserDetailsService;
+import com.a3bradesco.api.config.security.jwt.JwtService;
 import com.a3bradesco.api.dto.LoginDTO;
 import com.a3bradesco.api.dto.UserDTO;
 import com.a3bradesco.api.entities.User;
+import com.a3bradesco.api.entities.enums.UserRole;
 import com.a3bradesco.api.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,6 +37,12 @@ public class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private JwtService jwtService;
+    
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;

@@ -19,6 +19,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.a3bradesco.api.config.security.CustomUserDetailsService;
+import com.a3bradesco.api.config.security.jwt.JwtService;
 import com.a3bradesco.api.entities.EmailReport;
 import com.a3bradesco.api.services.EmailReportService;
 
@@ -32,6 +34,12 @@ class EmailReportControllerTest {
 
         @MockBean
         private EmailReportService service;
+
+        @MockBean
+        private JwtService jwtService;
+        
+        @MockBean
+        private CustomUserDetailsService customUserDetailsService;
 
         private final String validEmail = "caue@gmail.com";
 
