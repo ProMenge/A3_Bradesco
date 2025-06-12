@@ -43,15 +43,35 @@ class UserReportTest {
 
     @Test
     void testEqualsAndHashCode() {
-        User user = new User(1L, "Caue Urbini", "11122233344", "Caue@email.com", "Galinha7");
+        User reporter1 = new User();
+        reporter1.setId(1L);
+        User reporter2 = new User();
+        reporter2.setId(1L);
+        User reporter3 = new User();
+        reporter3.setId(2L);
 
-        UserReport r1 = new UserReport(null, user, ReportType.CPF, "12345678900", LocalDateTime.now());
-        UserReport r2 = new UserReport(null, user, ReportType.CPF, "12345678900", LocalDateTime.now());
-        UserReport r3 = new UserReport(null, user, ReportType.EMAIL, "caue@email.com", LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+
+        UserReport r1 = new UserReport(reporter1.getId(), reporter1, ReportType.CPF, "123", now);
+        UserReport r2 = new UserReport(reporter2.getId(), reporter2, ReportType.CPF, "123", now);
+        UserReport r3 = new UserReport(reporter3.getId(), reporter3, ReportType.CPF, "123", now);
+        UserReport r4 = new UserReport(reporter1.getId(), reporter1, ReportType.CNPJ, "123", now);
+        UserReport r5 = new UserReport(reporter1.getId(), reporter1, ReportType.CPF, "456", now);
+        UserReport r6 = new UserReport(null, null, ReportType.CPF, "123", now);
+        UserReport r7 = new UserReport(null, null, ReportType.CPF, "123", now);
 
         assertEquals(r1, r2);
-        assertNotEquals(r1, r3);
         assertEquals(r1.hashCode(), r2.hashCode());
-        assertNotEquals(r1.hashCode(), r3.hashCode());
+
+        assertNotEquals(r1, r3);
+        assertNotEquals(r1, r4);
+        assertNotEquals(r1, r5);
+
+        assertEquals(r6, r7);
+        assertEquals(r6.hashCode(), r7.hashCode());
+
+        assertNotEquals(r1, null);
+        assertNotEquals(r1, "string");
+        assertEquals(r1, r1);
     }
 }

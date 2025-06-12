@@ -35,13 +35,35 @@ class CnpjReportTest {
     @Test
     void testEqualsAndHashCode() {
         LocalDate date = LocalDate.now();
+
         CnpjReport r1 = new CnpjReport("12345678000199", 1, date);
         CnpjReport r2 = new CnpjReport("12345678000199", 2, date);
         CnpjReport r3 = new CnpjReport("11111111000111", 1, date);
+        CnpjReport r4 = new CnpjReport(null, 1, date);
+        CnpjReport r5 = new CnpjReport(null, 1, date);
 
+        // Mesmo objeto
+        assertEquals(r1, r1);
+
+        // Comparando com null
+        assertNotEquals(r1, null);
+
+        // Comparando com objeto de outra classe
+        assertNotEquals(r1, "alguma string");
+
+        // Mesmo CNPJ
         assertEquals(r1, r2);
-        assertNotEquals(r1, r3);
         assertEquals(r1.hashCode(), r2.hashCode());
+
+        // CNPJ diferente
+        assertNotEquals(r1, r3);
         assertNotEquals(r1.hashCode(), r3.hashCode());
+
+        // Um com CNPJ null, outro não
+        assertNotEquals(r1, r4);
+
+        // Ambos com CNPJ null
+        assertEquals(r4, r5);
+        assertEquals(r4.hashCode(), r5.hashCode());
     }
 }

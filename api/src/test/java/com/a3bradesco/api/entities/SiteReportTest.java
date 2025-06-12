@@ -34,14 +34,25 @@ class SiteReportTest {
 
     @Test
     void testEqualsAndHashCode() {
-        LocalDate now = LocalDate.now();
-        SiteReport r1 = new SiteReport("www.site.com", 1, now);
-        SiteReport r2 = new SiteReport("www.site.com", 10, now);
-        SiteReport r3 = new SiteReport("www.diferente.com", 1, now);
+        LocalDate date = LocalDate.now();
+
+        SiteReport r1 = new SiteReport("example.com", 1, date);
+        SiteReport r2 = new SiteReport("example.com", 2, date);
+        SiteReport r3 = new SiteReport("another.com", 1, date);
+        SiteReport r4 = new SiteReport(null, 1, date);
+        SiteReport r5 = new SiteReport(null, 2, date);
 
         assertEquals(r1, r2);
-        assertNotEquals(r1, r3);
         assertEquals(r1.hashCode(), r2.hashCode());
+
+        assertNotEquals(r1, r3);
         assertNotEquals(r1.hashCode(), r3.hashCode());
+
+        assertEquals(r4, r5);
+        assertEquals(r4.hashCode(), r5.hashCode());
+
+        assertNotEquals(r1, null);
+        assertNotEquals(r1, "string");
+        assertEquals(r1, r1);
     }
 }

@@ -43,30 +43,27 @@ class UserTest {
     void testEqualsAndHashCode() {
         User u1 = new User();
         u1.setId(1L);
-        u1.setName("Caue Urbini");
-        u1.setCpf("09876543210");
-        u1.setEmail("Caue@email.com");
-        u1.setPassword("Galinha7");
-
         User u2 = new User();
         u2.setId(1L);
-        u2.setName("Julia Maria");
-        u2.setCpf("09871843210");
-        u2.setEmail("Julia@email.com");
-        u2.setPassword("Galinha2");
-
         User u3 = new User();
         u3.setId(2L);
-        u3.setName("Caue Urbini");
-        u3.setCpf("09876543210");
-        u3.setEmail("Caue@email.com");
-        u3.setPassword("Galinha7");
+        User u4 = new User();
+        u4.setId(null);
+        User u5 = new User();
+        u5.setId(null);
 
-        // Verificações
-        assertEquals(u1.getId(), u2.getId());
-        assertNotEquals(u3.getId(), u2.getId());
-        assertEquals(u1.getId().hashCode(), u2.getId().hashCode());
-        assertNotEquals(u1.getId().hashCode(), u3.getId().hashCode());
+        assertEquals(u1, u2);
+        assertEquals(u1.hashCode(), u2.hashCode());
+
+        assertNotEquals(u1, u3);
+        assertNotEquals(u1, u4);
+
+        assertEquals(u4, u5);
+        assertEquals(u4.hashCode(), u5.hashCode());
+
+        assertEquals(u1, u1);
+        assertNotEquals(u1, null);
+        assertNotEquals(u1, "string");
     }
 
 }
