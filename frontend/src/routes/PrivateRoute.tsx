@@ -6,7 +6,11 @@ interface Props {
 }
 
 export const PrivateRoute = ({ children }: Props) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return null;
+  }
 
   // Se não estiver logado, redireciona
   if (!user) return <Navigate to="/" replace />;

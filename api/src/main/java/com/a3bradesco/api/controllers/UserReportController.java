@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.security.core.Authentication;
 
+import com.a3bradesco.api.config.security.CustomUserDetails;
 import com.a3bradesco.api.dto.UserReportDTO;
 import com.a3bradesco.api.entities.User;
 import com.a3bradesco.api.entities.UserReport;
@@ -34,7 +37,14 @@ public class UserReportController {
     UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserReport>> findAll(@PathVariable Long userId) {
+    public ResponseEntity<?> findAll(@PathVariable Long userId, Authentication authentication) {
+        CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
+        System.out.println(authentication);
+
+        if (!currentUser.getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado.");
+        }
+
         User user = userService.findById(userId);
         List<UserReport> reportList = userReportService.findByReporter(user);
         return ResponseEntity.ok().body(reportList);
@@ -43,8 +53,6 @@ public class UserReportController {
     @PostMapping
     public ResponseEntity<?> saveNewReport(@PathVariable Long userId, 
     @RequestBody @Valid UserReportDTO reportDTO) {
-        //TODO: Atribuir report ao usuário logado
-        //pega o usuário passado no dto (pelo id) no banco e atribui o report a ele
         try {
             UserReport saved = userReportService.saveNewReport(userId, reportDTO);
             URI uri = ServletUriComponentsBuilder.fromCurrentRequest()

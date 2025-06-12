@@ -2,6 +2,7 @@ package com.a3bradesco.api.controllers;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.a3bradesco.api.config.security.CustomUserDetails;
+import com.a3bradesco.api.config.security.CustomUserDetailsService;
+import com.a3bradesco.api.config.security.jwt.JwtService;
 import com.a3bradesco.api.dto.LoginDTO;
 import com.a3bradesco.api.dto.UserDTO;
 import com.a3bradesco.api.entities.User;
@@ -27,13 +31,22 @@ import jakarta.validation.Valid;
 public class UserController {
 
     @Autowired
+    CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    JwtService jwtService;
+
+    @Autowired
     UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginDTO dto) {
         try {
             User user = userService.login(dto.getIdentifier(), dto.getPassword());
-            return ResponseEntity.ok(user);
+
+            String token = jwtService.generateToken(new CustomUserDetails(user, dto.getIdentifier()), user.getId());
+
+            return ResponseEntity.ok(Map.of("token", token, "user", user));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }

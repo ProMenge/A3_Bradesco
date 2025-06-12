@@ -80,8 +80,10 @@ export const Login = () => {
       }
 
       const { identifier, password } = values;
-      const user = await loginUser({ identifier, password });
-      login(user);
+      const response = await loginUser({ identifier, password });
+      console.log(response);
+      const { user, token } = response;
+      login(user, token);
       toast.success("Login realizado!");
       navigate("/dashboard");
     } catch (err) {
