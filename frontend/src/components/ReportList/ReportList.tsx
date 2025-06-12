@@ -35,14 +35,14 @@ export const ReportList = ({ reports, onDelete }: ReportListProps) => {
         reportToDelete.reportType,
         reportToDelete.rawValue,
       );
-      setReportToDelete(null); // Limpa o estado
-      setShowConfirmModal(false); // Fecha o modal
+      setReportToDelete(null);
+      setShowConfirmModal(false);
     }
   };
 
   const handleCancelDelete = () => {
-    setReportToDelete(null); // Limpa o estado
-    setShowConfirmModal(false); // Fecha o modal
+    setReportToDelete(null);
+    setShowConfirmModal(false);
   };
 
   return (
@@ -58,7 +58,6 @@ export const ReportList = ({ reports, onDelete }: ReportListProps) => {
             <div className="right">
               <div className="title-line">
                 <h4>Golpe via Pix</h4>{" "}
-                {/* Ajuste se este título é fixo ou dinâmico */}
                 <S.Badge type={ReportTypeLabel[report.reportType]}>
                   {ReportTypeLabel[report.reportType]}
                 </S.Badge>
@@ -80,7 +79,6 @@ export const ReportList = ({ reports, onDelete }: ReportListProps) => {
         ))}
       </ul>
 
-      {/* Renderiza o modal de confirmação condicionalmente */}
       {showConfirmModal && reportToDelete && (
         <ConfirmationModal
           message={`Tem certeza que deseja remover a denúncia do ${ReportTypeLabel[reportToDelete.reportType]}: ${reportToDelete.dataValue}?`}

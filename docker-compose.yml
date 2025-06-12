@@ -7,12 +7,6 @@ services:
     ports:
       - "8080:8080"
 
-  chat:
-    build: ./chat
-    container_name: chat-service
-    ports:
-      - "8081:8080" # externo:interno
-
   frontend:
     build: ./frontend
     container_name: frontend-app
