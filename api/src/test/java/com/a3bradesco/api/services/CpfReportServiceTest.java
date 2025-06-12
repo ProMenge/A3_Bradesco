@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,5 +107,34 @@ class CpfReportServiceTest {
         ArgumentCaptor<CpfReport> captor = ArgumentCaptor.forClass(CpfReport.class);
         verify(service).insert(captor.capture());
         assertEquals(2, captor.getValue().getReportQuantity());
+    }
+     @Test
+    void testFindAll() {
+        CpfReport report = new CpfReport();
+        when(repository.findAll()).thenReturn(List.of(report));
+
+        List<CpfReport> result = service.findAll();
+
+        assertEquals(1, result.size());
+        verify(repository).findAll();
+    }
+
+    @Test
+    void testFindById_existingId() {
+        String id = "123";
+        CpfReport report = new CpfReport();
+        when(repository.findById(id)).thenReturn(Optional.of(report));
+
+        CpfReport result = service.findById(id);
+
+        assertNotNull(result);
+        verify(repository).findById(id);
+    }
+    @Test
+    void testFindById_nonexistentId_throwsException() {
+        String id = "456";
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
     }
 }

@@ -20,6 +20,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.a3bradesco.api.config.security.CustomUserDetailsService;
+import com.a3bradesco.api.config.security.jwt.JwtService;
 import com.a3bradesco.api.entities.SiteReport;
 import com.a3bradesco.api.services.SiteReportService;
 
@@ -33,6 +35,12 @@ class SiteReportControllerTest {
 
         @MockBean
         private SiteReportService service;
+
+        @MockBean
+        private JwtService jwtService;
+        
+        @MockBean
+        private CustomUserDetailsService customUserDetailsService;
 
         private final String validUrl = "https://github.com";
 
@@ -138,7 +146,7 @@ class SiteReportControllerTest {
                 when(service.findById(validUrl))
                                 .thenReturn(new SiteReport(validUrl, 1, LocalDate.now()));
 
-                mockMvc.perform(get("/site-reports/" + validUrl))
+                mockMvc.perform(get("/site-reports?site=" + validUrl))
                                 .andExpect(status().isOk());
         }
 
@@ -147,7 +155,7 @@ class SiteReportControllerTest {
         void whenDeleteValidUrl_thenReturnsOk() throws Exception {
                 doNothing().when(service).deleteReport(validUrl);
 
-                mockMvc.perform(delete("/site-reports/" + validUrl))
+                mockMvc.perform(delete("/site-reports?site=" + validUrl))
                                 .andExpect(status().isOk());
         }
 

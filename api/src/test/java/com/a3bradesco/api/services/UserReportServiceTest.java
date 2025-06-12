@@ -32,6 +32,12 @@ class UserReportServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private EmailReportService emailReportService;
+
+    @Mock
+    private CpfReportService cpfReportService;
+
     private AutoCloseable closeable;
 
     @BeforeEach

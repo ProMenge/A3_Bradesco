@@ -3,9 +3,9 @@ package com.a3bradesco.api.controllers;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
@@ -20,6 +20,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.a3bradesco.api.config.security.CustomUserDetailsService;
+import com.a3bradesco.api.config.security.jwt.JwtService;
 import com.a3bradesco.api.entities.CellphoneReport;
 import com.a3bradesco.api.services.CellphoneReportService;
 
@@ -33,6 +35,12 @@ class CellphoneReportControllerTest {
 
     @MockBean
     private CellphoneReportService service;
+
+    @MockBean
+    private JwtService jwtService;
+    
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     private final String validCellphone = "11992078740";
     private final String invalidCellphone = "123";
