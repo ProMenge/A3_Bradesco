@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.a3bradesco.api.config.security.CustomUserDetailsService;
 import com.a3bradesco.api.config.security.SecurityConfig;
-import com.a3bradesco.api.config.security.TestSecurityConfig;
 import com.a3bradesco.api.config.security.jwt.JwtService;
 import com.a3bradesco.api.controllers.TestController;
 
@@ -26,9 +25,8 @@ import java.util.Collections;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 @WebMvcTest(controllers = TestController.class)
-@Import(TestSecurityConfig.class) // <--- Importa a config personalizada!
+@Import(SecurityConfig.class)
 @AutoConfigureMockMvc(addFilters = true)
-// Mantém os filtros (o JwtAuthFilter será testado!)
 class JwtAuthFilterTest {
 
     @Autowired

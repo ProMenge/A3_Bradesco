@@ -55,7 +55,6 @@ public class SecurityConfig {
             .and()
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/users/login", "/users").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/users/*/user-reports").authenticated()
                 .requestMatchers(HttpMethod.POST, "/users/*/user-reports").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/users/*/user-reports/*").authenticated()
