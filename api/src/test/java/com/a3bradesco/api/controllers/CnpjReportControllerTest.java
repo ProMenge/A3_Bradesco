@@ -3,9 +3,12 @@ package com.a3bradesco.api.controllers;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,11 +19,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.a3bradesco.api.config.security.CustomUserDetailsService;
+import com.a3bradesco.api.config.security.jwt.JwtService;
 import com.a3bradesco.api.entities.CnpjReport;
 import com.a3bradesco.api.services.CnpjReportService;
 
-@AutoConfigureMockMvc(addFilters = false) // Ignorei a segurança do teste para evitar o erro 403, desativando a autenticação e autorização 
-@WebMvcTest(CnpjReportController.class) 
+@AutoConfigureMockMvc(addFilters = false) // Ignorei a segurança do teste para evitar o erro 403, desativando a
+                                          // autenticação e autorização
+@WebMvcTest(CnpjReportController.class)
 class CnpjReportControllerTest {
 
     @Autowired
@@ -28,6 +34,12 @@ class CnpjReportControllerTest {
 
     @MockBean
     private CnpjReportService service;
+
+    @MockBean
+    private JwtService jwtService;
+    
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     private final String validCnpj = "12345678900123";
 
@@ -80,29 +92,51 @@ class CnpjReportControllerTest {
                 .content(json))
                 .andExpect(status().isBadRequest());
     }
-    // 5 - Cnpj com caracteres alfabéticos deve ser inválido - retorna BadRequest 
+
+    // 5 - Cnpj com caracteres alfabéticos deve ser inválido - retorna BadRequest
     @Test
     void whenCnpjContainsLetters_thenReturnsBadRequest() throws Exception {
-    String invalidcnpj = "123ABC7890X123"; // inválido
+        String invalidcnpj = "123ABC7890X123"; // inválido
 
         mockMvc.perform(post("/cnpj-reports")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"cnpj\": \"" + invalidcnpj + "\"}"))
-            .andExpect(status().isBadRequest());
-}
-    // 6 - Cnpj com símbolos como ".", "-"  - retorna BadRequest
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"cnpj\": \"" + invalidcnpj + "\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    // 6 - Cnpj com símbolos como ".", "-" - retorna BadRequest
     @Test
     void whenCnpjHasSymbols_thenReturnsBadRequest() throws Exception {
-    String cnpjWithSymbols = "123.456.789-00123";
+        String cnpjWithSymbols = "123.456.789-00123";
 
-    mockMvc.perform(post("/cnpj-reports")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"cnpj\": \"" + cnpjWithSymbols + "\"}"))
-            .andExpect(status().isBadRequest());
-}
+        mockMvc.perform(post("/cnpj-reports")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"cnpj\": \"" + cnpjWithSymbols + "\"}"))
+                .andExpect(status().isBadRequest());
+    }
 
+    // 7. GET - Busca um Cnpj válido e espera OK
+    @Test
+    void whenGetValidCnpj_thenReturnsOk() throws Exception {
+        mockMvc.perform(get("/cnpj-reports/" + validCnpj))
+                .andExpect(status().isOk());
+    }
 
+    // 8. DELETE - Remove um Cnpj válido
+    @Test
+    void whenDeleteValidCnpj_thenReturnsNoContent() throws Exception {
+        mockMvc.perform(delete("/cnpj-reports/" + validCnpj))
+                .andExpect(status().isOk());
+    }
 
-
+    // 9. GET - Retorna lista de Cnpj cadastrados
+    @Test
+    void whenFindAll_thenReturnsListAndStatusOk() throws Exception {
+        CnpjReport report1 = new CnpjReport("12345678900123", 2, LocalDate.now());
+        CnpjReport report2 = new CnpjReport("12345678900127", 1, LocalDate.now());
+        when(service.findAll()).thenReturn(Arrays.asList(report1, report2));
+        mockMvc.perform(get("/cnpj-reports"))
+                .andExpect(status().isOk());
+    }
 
 }

@@ -15,7 +15,9 @@ api.interceptors.request.use(
     // Recupera o token salvo (se houver)
     const token = localStorage.getItem("token");
 
-    if (token) {
+    const isLoginRoute = config.url?.includes("/users/login");
+
+    if (token && !isLoginRoute) {
       // Adiciona o token no header Authorization
       config.headers.Authorization = `Bearer ${token}`;
     }

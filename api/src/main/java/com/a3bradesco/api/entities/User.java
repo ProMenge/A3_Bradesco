@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.a3bradesco.api.entities.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,6 +30,9 @@ public class User implements Serializable {
     private String email;
     @JsonIgnore
     private String password;
+    @JsonIgnore
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 
     @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserReport> reports = new HashSet<>();
@@ -39,6 +45,14 @@ public class User implements Serializable {
         this.cpf = cpf;
         this.email = email;
         this.password = password;
+    }
+
+    public User(Long id, String name, String cpf, String email, String password, UserRole role) {
+        this.name = name;
+        this.cpf = cpf;
+        this.email = email;
+        this.password = password;
+        this.userRole = role;
     }
 
     public Long getId() {
@@ -70,6 +84,12 @@ public class User implements Serializable {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+    public UserRole getUserRole() {
+        return userRole;
+    }
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
     @Override

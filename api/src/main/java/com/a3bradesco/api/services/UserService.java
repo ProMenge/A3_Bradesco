@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.a3bradesco.api.dto.UserDTO;
 import com.a3bradesco.api.entities.User;
+import com.a3bradesco.api.entities.enums.UserRole;
 import com.a3bradesco.api.repositories.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -44,6 +45,7 @@ public class UserService {
             user.setEmail(dto.getEmail());
             user.setCpf(dto.getCpf());
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
+            user.setUserRole(UserRole.ROLE_USER);
 
             return insert(user);
         }
