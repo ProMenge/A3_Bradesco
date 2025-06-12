@@ -35,13 +35,24 @@ class CpfReportTest {
     @Test
     void testEqualsAndHashCode() {
         LocalDate date = LocalDate.now();
+
         CpfReport r1 = new CpfReport("12345678901", 1, date);
         CpfReport r2 = new CpfReport("12345678901", 2, date);
-        CpfReport r3 = new CpfReport("11111111111", 1, date);
+        CpfReport r3 = new CpfReport("09876543210", 1, date);
+        CpfReport r4 = new CpfReport(null, 1, date);
+        CpfReport r5 = new CpfReport(null, 2, date);
 
         assertEquals(r1, r2);
-        assertNotEquals(r1, r3);
         assertEquals(r1.hashCode(), r2.hashCode());
+
+        assertNotEquals(r1, r3);
         assertNotEquals(r1.hashCode(), r3.hashCode());
+
+        assertEquals(r4, r5);
+        assertEquals(r4.hashCode(), r5.hashCode());
+
+        assertNotEquals(r1, null);
+        assertNotEquals(r1, "string");
+        assertEquals(r1, r1);
     }
 }

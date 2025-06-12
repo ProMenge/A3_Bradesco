@@ -36,14 +36,23 @@ class CellphoneReportTest {
     void testEqualsAndHashCode() {
         LocalDate date = LocalDate.now();
 
-        CellphoneReport report1 = new CellphoneReport("11999999999", 1, date);
-        CellphoneReport report2 = new CellphoneReport("11999999999", 2, date); // reportQuantity diferente, mas
-                                                                               // cellphone igual
-        CellphoneReport report3 = new CellphoneReport("11888888888", 1, date);
+        CellphoneReport r1 = new CellphoneReport("11999999999", 1, date);
+        CellphoneReport r2 = new CellphoneReport("11999999999", 2, date);
+        CellphoneReport r3 = new CellphoneReport("11888888888", 1, date);
+        CellphoneReport r4 = new CellphoneReport(null, 1, date);
+        CellphoneReport r5 = new CellphoneReport(null, 2, date);
 
-        assertEquals(report1, report2); // mesmo cellphone
-        assertNotEquals(report1, report3); // cellphone diferente
-        assertEquals(report1.hashCode(), report2.hashCode());
-        assertNotEquals(report1.hashCode(), report3.hashCode());
+        assertEquals(r1, r2);
+        assertEquals(r1.hashCode(), r2.hashCode());
+
+        assertNotEquals(r1, r3);
+        assertNotEquals(r1.hashCode(), r3.hashCode());
+
+        assertEquals(r4, r5);
+        assertEquals(r4.hashCode(), r5.hashCode());
+
+        assertNotEquals(r1, null);                     
+        assertNotEquals(r1, "string");                  
+        assertEquals(r1, r1);                     
     }
 }

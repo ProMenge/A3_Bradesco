@@ -35,13 +35,24 @@ class EmailReportTest {
     @Test
     void testEqualsAndHashCode() {
         LocalDate date = LocalDate.now();
-        EmailReport r1 = new EmailReport("caue@teste.com", 1, date);
-        EmailReport r2 = new EmailReport("caue@teste.com", 2, date);
-        EmailReport r3 = new EmailReport("fred@gmail.com", 1, date);
+
+        EmailReport r1 = new EmailReport("teste@exemplo.com", 1, date);
+        EmailReport r2 = new EmailReport("teste@exemplo.com", 2, date);
+        EmailReport r3 = new EmailReport("outro@exemplo.com", 1, date);
+        EmailReport r4 = new EmailReport(null, 1, date);
+        EmailReport r5 = new EmailReport(null, 2, date);
 
         assertEquals(r1, r2);
-        assertNotEquals(r1, r3);
         assertEquals(r1.hashCode(), r2.hashCode());
+
+        assertNotEquals(r1, r3);
         assertNotEquals(r1.hashCode(), r3.hashCode());
+
+        assertEquals(r4, r5);
+        assertEquals(r4.hashCode(), r5.hashCode());
+
+        assertNotEquals(r1, null);
+        assertNotEquals(r1, "string");
+        assertEquals(r1, r1);
     }
 }
