@@ -51,8 +51,14 @@ public class UserReportController {
 
     @PostMapping
     public ResponseEntity<?> saveNewReport(@PathVariable Long userId, 
-    @RequestBody @Valid UserReportDTO reportDTO) {
+    @RequestBody @Valid UserReportDTO reportDTO, Authentication authentication) {
         try {
+            CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
+
+            if (!currentUser.getId().equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado.");
+            }
+            
             UserReport saved = userReportService.saveNewReport(userId, reportDTO);
             URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                       .path("/{id}").buildAndExpand(saved.getId()).toUri();
@@ -66,7 +72,13 @@ public class UserReportController {
     }
 
     @DeleteMapping("/{reportId}")
-    public ResponseEntity<String> deleteReport(@PathVariable Long reportId) {
+    public ResponseEntity<String> deleteReport(@PathVariable Long reportId, @PathVariable Long userId, Authentication authentication) {
+        CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
+
+        if (!currentUser.getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado.");
+        }
+
         userReportService.deleteReport(reportId);
         return ResponseEntity.ok("Denúncia retirada com sucesso!");
     }
