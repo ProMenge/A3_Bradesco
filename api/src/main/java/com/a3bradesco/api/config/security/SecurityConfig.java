@@ -22,48 +22,51 @@ import com.a3bradesco.api.config.security.jwt.JwtAuthFilter;
 @EnableWebSecurity
 public class SecurityConfig {
 
-     @Bean
+    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+
+        // ✅ Inclui domínio do frontend da Azure + localhost
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://uama3bradesco-azfyhgdygdd7d8fg.canadacentral-01.azurewebsites.net"));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true); // necessário se estiver usando cookies ou Authorization headers
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-    
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .cors()
-            .and()
-            .headers().frameOptions().disable()
-            .and()
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, "/users/login", "/users").permitAll()
-                .requestMatchers(HttpMethod.GET, "/users/*/user-reports").authenticated()
-                .requestMatchers(HttpMethod.POST, "/users/*/user-reports").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/users/*/user-reports/*").authenticated()
+                .csrf(csrf -> csrf.disable())
+                .cors() // ✅ Importante: isso ativa o uso do CorsConfigurationSource acima
+                .and()
+                .headers().frameOptions().disable()
+                .and()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/users/login", "/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/*/user-reports").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/users/*/user-reports").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/users/*/user-reports/*").authenticated()
+                        .requestMatchers("/users/**", "/cpf-reports/**", "/cnpj-reports/**", "/email-reports/**",
+                                "/site-reports/**", "/cellphone-reports/**")
+                        .hasRole("ADMIN")
+                        .anyRequest().denyAll())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-                .requestMatchers("/users/**", "/cpf-reports/**", "/cnpj-reports/**", "/email-reports/**", "/site-reports/**", "/cellphone-reports/**").hasRole("ADMIN")
-
-                .anyRequest().denyAll()
-            
-            ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

@@ -81,15 +81,12 @@ export const Login = () => {
 
       const { identifier, password } = values;
       const response = await loginUser({ identifier, password });
-      console.log(response);
+
       const { user, token } = response;
       login(user, token);
       toast.success("Login realizado!");
       navigate("/dashboard");
     } catch (err) {
-      // Removido ': any' para melhor tipagem
-      console.log("erro aqui", err); // Mantenha para depuração
-
       let errorMessage = "Erro inesperado ao autenticar."; // Mensagem padrão de fallback
 
       // 1. Verifique se é um erro do Axios
@@ -147,15 +144,13 @@ export const Login = () => {
           errorMessage =
             "Nenhuma resposta recebida do servidor. Verifique sua conexão.";
         } else {
-          // Algo aconteceu na configuração da requisição que disparou um erro
           errorMessage = axiosError.message; // Mensagem de erro do próprio Axios
         }
       } else if (err instanceof Error) {
-        // Erro genérico do JavaScript (ex: erro de tipagem no frontend, etc.)
         errorMessage = err.message;
       }
 
-      toast.error(errorMessage); // Exibe a mensagem de erro específica
+      toast.error(errorMessage);
     }
   };
 

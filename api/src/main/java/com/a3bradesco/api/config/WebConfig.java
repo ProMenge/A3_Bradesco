@@ -9,7 +9,11 @@ public class WebConfig implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
-            .allowedOrigins("http://localhost:5173")
-            .allowedMethods("*");
-        }
+        .allowedOrigins(
+            "http://localhost:5173",
+            "https://uama3bradesco-azfyhgdygdd7d8fg.canadacentral-01.azurewebsites.net")
+        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        .allowedHeaders("*")
+        .allowCredentials(true);
+  }
 }

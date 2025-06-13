@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 // 1. Cria a instância base da API
 export const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
