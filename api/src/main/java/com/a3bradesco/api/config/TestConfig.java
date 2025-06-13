@@ -29,7 +29,7 @@ public class TestConfig implements CommandLineRunner {
         User user2 = new User(null, "Fred", "22222222222", "fred@gmail.com",
                 passwordEncoder.encode("Galinha1"), UserRole.ROLE_USER);
         User user3 = new User(null, "Caue", "33333333333", "caue@gmail.com", passwordEncoder.encode("Galinha1"), UserRole.ROLE_USER);
-        User user4 = new User(null, "System admin", "44444444444", "admin@gmail.com", passwordEncoder.encode("Galinha1"), UserRole.ROLE_ADMIN);
+        User user4 = new User(null, "System admin", "44444444444", "admin@gmail.com", passwordEncoder.encode("AdminUser1"), UserRole.ROLE_ADMIN);
         
         userRepository.saveAll(Arrays.asList(user1, user2, user3, user4));
     }
