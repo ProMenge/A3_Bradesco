@@ -81,14 +81,12 @@ export const Login = () => {
 
       const { identifier, password } = values;
       const response = await loginUser({ identifier, password });
-      console.log(response);
+
       const { user, token } = response;
       login(user, token);
       toast.success("Login realizado!");
       navigate("/dashboard");
     } catch (err) {
-      console.log("erro aqui", err);
-
       let errorMessage = "Erro inesperado ao autenticar."; // Mensagem padrão de fallback
 
       // 1. Verifique se é um erro do Axios
